@@ -6,15 +6,15 @@ import Navbar from '../components/Navbar'
 
 const Home = () => {
   return (
-    <div className=' bg-[#000000] w-full overflow-x-hidden h-full'> 
+    <div className=' bg-[#000000] w-full overflow-x-hidden h-full'>
     {/* <Navbar/> */}
         <Hero/>
-       
+
         <Row fetchURL={requests.requestUpcoming} title='upcoming'/>
         <Row fetchURL={requests.requestPopular} title='popular'/>
-        <Row fetchURL={requests.requestTrending} title='popular'/>
+        <Row fetchURL={requests.requestTrending} title='trending'/>
         <Row fetchURL={requests.requestTopRated} title='top_rated'/>
-        {/* <Row fetchURL={requests.requestHorror} title='horror'/> */}
+        <Row fetchURL={requests.requestHorror} title='horror'/>
     </div>
   )
 }
