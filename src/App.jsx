@@ -1,5 +1,4 @@
-import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import Home from "./pages/Home";
 import { Route, Routes } from "react-router-dom";
 import MovieDetails from "./pages/MovieDetails";
@@ -11,8 +10,6 @@ import Navbar from "./components/Navbar";
 import ShowsList from "./pages/ShowsList";
 
 const App = () => {
-  const api_key = "88c8c02e23f2f680648798958aabb276";
-  const [data, setData] = useState("");
   return (
     <UserContext>
       <div className=" font-montserrat">
