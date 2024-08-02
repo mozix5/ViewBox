@@ -7,46 +7,38 @@ import { useUserData } from "../context/UserContext";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Loader from "../components/Loader";
+import Youtube from "react-youtube";
+import Modal from "../components/Modal";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchMovieById } from "../redux/features/movies/movieByIdSlice";
 
 const MovieDetails = () => {
   const { id } = useParams();
-  const [movieData, setMovieData] = useState({});
-  const [trailer, setTrailer] = useState(null);
   const [flag, setFlag] = useState(false);
   const { token, user } = useUserData();
   const [isInCollection, setIsInCollection] = useState(false);
-  const [showToast, setShowToast] = useState(false);
-  const key = "88c8c02e23f2f680648798958aabb276";
-  const [isLoading, setIsLoading] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const { data, loading, error } = useSelector((state) => state.movieById);
+  const dispatch = useDispatch();
+
   // const userId = user?.userId;
   useEffect(() => {
+    if (id) {
+      dispatch(fetchMovieById({ id: id }));
+    }
     const fetchData = async () => {
       try {
-        setIsLoading(true);
-        const response = await axios.get(
-          `https://api.themoviedb.org/3/movie/${id}?api_key=${key}&append_to_response=videos`
-        );
-        const data = response.data;
-        setMovieData(data);
-        setIsLoading(false);
-
         if (user) {
           checkIfShowInCollection();
           console.log("excecuted");
         }
-
-        const trailerId = data.videos.results.find(
-          (vid) => vid.name === "Official Trailer"
-        );
-        setTrailer(trailerId || data.videos.results[0]);
       } catch (error) {
         console.error(error);
       }
     };
 
     fetchData();
-  }, [id]);
-
+  }, [id, dispatch]);
   const checkIfShowInCollection = async () => {
     try {
       const response = await axios.get(
@@ -85,7 +77,6 @@ const MovieDetails = () => {
         console.error(error);
       }
     } else {
-      setShowToast(true);
       displayLoginNotification();
     }
   };
@@ -108,13 +99,26 @@ const MovieDetails = () => {
     }
   };
 
-  const displayLoginNotification = () => {
-    toast.warn("Login First");
-  };
-  // console.log(user._id);
+  const trailerId =
+    data?.videos?.results?.find((vid) => vid.name === "Official Trailer") ||
+    data?.videos?.results[0];
+
   return (
     <div className="bg-gradient-to-t from-black h-screen w-screen flex items-center justify-center text-white">
-
+      {showModal ? (
+        <Modal setIsOpen={setShowModal}>
+          <div className="relative">
+            <Youtube
+              videoId={trailerId.key}
+              className="w-[50vh] h-[50vh] md:w-[100vh] md:h-[60vh]"
+              opts={{
+                width: "100%",
+                height: "100%",
+              }}
+            />
+          </div>
+        </Modal>
+      ) : null}
       <ToastContainer
         position="top-center"
         autoClose={5000}
@@ -126,14 +130,18 @@ const MovieDetails = () => {
         draggable
         pauseOnHover
         theme="dark"
+        opts={{
+          width: "100%",
+          height: "100%",
+          origin: window.location.origin,
+        }}
       />
-      {/* {showToast && displayLoginNotification()} */}
       <div className=" z-10 absolute bg-black opacity-50 top-0 left-0 right-0 bottom-0"></div>
       <div
         className="absolute top-0 left-0 bottom-0 right-0 "
         style={{
           backgroundImage: `url(https://image.tmdb.org/t/p/original${
-            movieData.backdrop_path || movieData.poster_path
+            data.backdrop_path || data.poster_path
           })`,
           backgroundSize: "cover",
           backgroundRepeat: "no-repeat",
@@ -144,24 +152,24 @@ const MovieDetails = () => {
         <div>
           <img
             className="h-[360px] w-64 shadow-2xl rounded-xl object-cover"
-            src={`https://image.tmdb.org/t/p/w500${movieData.poster_path}`}
-            alt={movieData.title}
+            src={`https://image.tmdb.org/t/p/w500${data.poster_path}`}
+            alt={data.title}
           />
         </div>
         <div className="flex-1 px-4">
-          <div className="text-4xl font-bold">{movieData?.title}</div>
+          <div className="text-4xl font-bold">{data?.title}</div>
           <div className="flex items-center gap-4 py-3">
             <div className="flex items-center gap-3 text-3xl">
               <AiTwotoneStar className="text-yellow-400" />
-              {movieData?.vote_average?.toFixed(1)}
+              {data?.vote_average?.toFixed(1)}
             </div>
             <div>
               <div className="flex gap-6 text-sm">
-                <div>Released: {movieData?.release_date}</div>
-                <div>{movieData.runtime} min</div>
+                <div>Released: {data?.release_date}</div>
+                <div>{data.runtime} min</div>
               </div>
               <div className="flex gap-4">
-                {movieData?.genres?.map((item, index) => (
+                {data?.genres?.map((item, index) => (
                   <div className="text-sm" key={index}>
                     {item.name}
                   </div>
@@ -169,9 +177,12 @@ const MovieDetails = () => {
               </div>
             </div>
           </div>
-          <div className="pb-3 text-sm">{movieData?.overview}</div>
+          <div className="pb-3 text-sm">{data?.overview}</div>
           <div className="py-2 flex gap-4 items-center">
-            <button className="bg-transparent border-2 border-white rounded-3xl px-10 py-1">
+            <button
+              onClick={() => setShowModal(true)}
+              className="bg-transparent border-2 cursor-pointer border-white rounded-3xl px-10 py-1"
+            >
               Trailer
             </button>
             {isInCollection ? (
