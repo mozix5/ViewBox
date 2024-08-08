@@ -1,45 +1,34 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import bg from "../assets/bg.jpg";
-import axios from "axios";
-import { useUserData } from "../context/UserContext";
 import { useNavigate } from "react-router-dom";
 import Loader from "../components/Loader";
-const Login = () => {
-  const { handleUser, handleToken, user, token } = useUserData();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const navigate = useNavigate();
+import { useForm } from "react-hook-form";
+import { useDispatch, useSelector } from "react-redux";
+import { login } from "../redux/features/auth/authSlice";
 
-  const handleEmailChange = (e) => {
-    setEmail(e.target.value);
+const Login = () => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const { loading, error, isAuthenticated, user } = useSelector(
+    (state) => state.auth
+  );
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/");
+    }
+  }, [user, navigate]);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
+
+  const formSubmit = (data) => {
+    dispatch(login({ body: data }));
   };
-  const handlePasswordChange = (e) => {
-    setPassword(e.target.value);
-  };
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setIsLoading(true);
-    console.log(email);
-    console.log(password);
-    axios
-      .post("https://shows-api.onrender.com/users/login", {
-        email: email,
-        password: password,
-      })
-      .then((res) => {
-        handleUser(res.data.user);
-        handleToken(res.data.token);
-        setIsLoading(false);
-        navigate("/");
-      })
-      .catch((err) => {
-        setIsLoading(false);
-        console.log(err);
-      });
-  };
-  console.log(user);
-  // console.log(token);
-  const [isLoading, setIsLoading] = useState(false);
   return (
     <div
       className="h-screen w-screen flex items-center justify-center"
@@ -50,7 +39,7 @@ const Login = () => {
         backgroundPosition: "center",
       }}
     >
-      {isLoading ? (
+      {loading ? (
         <Loader />
       ) : (
         <div
@@ -59,25 +48,39 @@ const Login = () => {
         >
           <div className=" mx-auto relative  my-auto">
             <div className=" text-white p-7 rounded-xl">
-              <form onSubmit={handleSubmit}>
+              <form onSubmit={handleSubmit(formSubmit)}>
                 <div className="flex flex-col gap-2">
                   <span>Signin</span>
                   <span>Email address</span>
                   <input
                     type="email"
                     placeholder="email..."
+                    name="email"
                     className="active:outline-none focus:outline-none text-black rounded-lg px-4 h-8 bg-[#F5F5F5] focus:bg-[#EAEAEA]"
-                    onChange={handleEmailChange}
+                    {...register("email", {
+                      required: true,
+                      pattern: /^[^@ ]+@[^@ ]+\.[^@ .]{2,}$/,
+                    })}
                   />
+                  {errors.email && errors.email.type === "required" && (
+                    <p>Email is required</p>
+                  )}
+                  {errors.email && errors.email.type === "pattern" && (
+                    <p>Invalid Email</p>
+                  )}
                 </div>
                 <div className="flex flex-col gap-2 my-6">
                   <span>Password</span>
                   <input
                     type="password"
                     placeholder="password..."
+                    name="password"
                     className="active:outline-none text-black focus:outline-none rounded-lg px-4 h-8 bg-[#F5F5F5] focus:bg-[#EAEAEA]"
-                    onChange={handlePasswordChange}
+                    {...register("password", { required: true })}
                   />
+                  {errors.password && errors.password.type === "required" && (
+                    <p>Password is required</p>
+                  )}
                 </div>
                 <div className="text-[#346BD4]">Forgot Password?</div>
                 <button
