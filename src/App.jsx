@@ -6,8 +6,7 @@ import MovieDetails from "./pages/MovieDetails";
 import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
 import ShowsList from "./pages/ShowsList";
-import MyShows from "./pages/MyShows";
-
+import WatchList from "./pages/WatchList";
 import Navbar from "./components/Navbar";
 
 const App = () => {
@@ -17,7 +16,7 @@ const App = () => {
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
-        <Route path="/myShows" element={<MyShows />} />
+        <Route path="/watchList" element={<WatchList />} />
         <Route path="/" element={<Home />} />
         <Route path="/:genre/:id" element={<MovieDetails />} />
         <Route path="/:genre" element={<ShowsList />} />

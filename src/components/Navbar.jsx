@@ -52,7 +52,7 @@ const Navbar = () => {
       ) : (
         <div className="flex gap-6">
           <div>{user?.username}</div>
-          <button onClick={() => navigate("/myShows")}>Watchlist</button>
+          <button onClick={() => navigate("/watchList")}>Watchlist</button>
           <button onClick={handleSignOut}>Sign Out</button>
         </div>
       )}

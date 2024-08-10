@@ -8,7 +8,7 @@ import Paginator from "../components/Paginator";
 import { setHeaders } from "../utils/constants";
 import { fetchWatchList } from "../redux/features/movies/fetchWatchListSlice";
 
-const MyShows = () => {
+const WatchList = () => {
   const dispatch = useDispatch();
   const { user, userToken } = useSelector((state) => state.auth);
   const { watchList } = useSelector((state) => state.fetchWatchList);
@@ -42,4 +42,4 @@ const MyShows = () => {
   );
 };
 
-export default MyShows;
+export default WatchList;
