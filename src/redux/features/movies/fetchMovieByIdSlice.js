@@ -2,16 +2,16 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { GET } from "../../../utils/api";
 
 const InitialState = {
-  data: {},
-  loading: false,
+  fetchedMovie: {},
+  isFetching: false,
   error: {},
 };
 
 export const fetchMovieById = createAsyncThunk(
   "movieById/fetch",
-  async ({ id}, { rejectWithValue }) => {
+  async ({ id }, { rejectWithValue }) => {
     try {
-      const response = await GET({id});
+      const response = await GET({ id });
       return response;
     } catch (error) {
       return rejectWithValue(error.message);
@@ -20,20 +20,20 @@ export const fetchMovieById = createAsyncThunk(
 );
 
 const fetchMovieByIdSlice = createSlice({
-  name: "movieById",
+  name: "fetchMovieById",
   initialState: InitialState,
   reducers: {},
   extraReducers: (builder) => {
     builder
       .addCase(fetchMovieById.pending, (state) => {
-        state.loading = true;
+        state.isFetching = true;
       })
       .addCase(fetchMovieById.fulfilled, (state, action) => {
-        state.loading = false;
-        state.data = action.payload;
+        state.isFetching = false;
+        state.fetchedMovie = action.payload;
       })
       .addCase(fetchMovieById.rejected, (state, action) => {
-        state.loading = false;
+        state.isFetching = false;
         state.error = action.payload ? action.payload.error : "Unknown Error";
       });
   },

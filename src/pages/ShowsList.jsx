@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import MovieCard from "../components/MovieCard";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchMovies } from "../redux/features/movies/moviesSlice";
+
+import MovieCard from "../components/MovieCard";
 import Paginator from "../components/Paginator";
+
+import { fetchMovies } from "../redux/features/movies/fetchMoviesSlice";
 
 const ShowsList = () => {
   const params = useParams();
   const dispatch = useDispatch();
-  const { data, loading, error } = useSelector((state) => state.movies);
+  const { fetchedMovies, isFetching, error } = useSelector((state) => state.fetchMovies);
 
   const [pageNum, setPageNum] = useState(() => {
     const searchParams = new URLSearchParams(window.location.search);
@@ -24,7 +26,7 @@ const ShowsList = () => {
   return (
     <div className="min-h-screen bg-black pt-24 pb-12 px-16 text-white">
       <div className="grid grid-cols-5 mb-12 gap-6 place-items-center border-red-600">
-        {data[pageNum]?.map((item) => (
+        {fetchedMovies[pageNum]?.map((item) => (
           <MovieCard
             key={item.id}
             image={item.poster_path}

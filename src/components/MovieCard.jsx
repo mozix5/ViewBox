@@ -1,11 +1,12 @@
 import React from "react";
+
 import { AiTwotoneStar } from "react-icons/ai";
 import { Link, useNavigate } from "react-router-dom";
 
 const MovieCard = ({ image, rating, id, genre }) => {
   const navigate = useNavigate();
   const handleClick = () => {
-    navigate(`/${id}/${genre}`);
+    navigate(`/${genre}/${id}`);
   };
   return (
     <div className="h-80 w-56 relative" onClick={handleClick}>
