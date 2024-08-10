@@ -1,65 +1,43 @@
-import axios from "axios";
-import React, { useEffect, useState } from "react";
-import { useUserData } from "../context/UserContext";
+import React, { useEffect } from "react";
+import { useLocation } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+
 import MovieCard from "../components/MovieCard";
+import Paginator from "../components/Paginator";
+
+import { setHeaders } from "../utils/constants";
+import { fetchWatchList } from "../redux/features/movies/fetchWatchListSlice";
 
 const MyShows = () => {
-  const { token, user } = useUserData();
-  const [shows, setShows] = useState([]);
-  const [showsFromAPI, setShowsFromAPI] = useState([]);
-  const key = "88c8c02e23f2f680648798958aabb276";
+  const dispatch = useDispatch();
+  const { user, userToken } = useSelector((state) => state.auth);
+  const { watchList } = useSelector((state) => state.fetchWatchList);
+  const headers = setHeaders(userToken);
+  const { search } = useLocation();
+  const key = search.split("=")[1] || 1;
+  console.log(key);
 
   useEffect(() => {
-    // console.log(user);
-    // console.log(token);
-    getUserShows();
-  }, []);
-
-  const getUserShows = async () => {
-    try {
-      const response = await axios.get("https://shows-api.onrender.com/shows", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        data: {
-          userId: user._id,
-        },
-      });
-      setShows(response.data);
-      // console.log(shows);
-    } catch (error) {
-      console.log(error);
+    if (user?._id && key) {
+      const endpoint = `${user?._id}/${search}`;
+      dispatch(fetchWatchList({ endpoint, headers, key }));
     }
-  };
+  }, [user, dispatch, fetchWatchList]);
 
-  useEffect(() => {
-    shows.forEach((item) => {
-      getShowsFromAPI(item.showId);
-    });
-  }, [shows]);
-
-  const getShowsFromAPI = async (showId) => {
-    try {
-      const response = await axios.get(
-        `https://api.themoviedb.org/3/movie/${showId}?api_key=${key}`
-      );
-      setShowsFromAPI((prev) => [...prev, response.data]);
-    } catch (error) {
-      console.log(error);
-    }
-  };
   return (
     <div className=" bg-black pt-20 pb-6 text-white min-h-screen px-16">
       <div className=" flex gap-8 flex-wrap justify-start">
-      {showsFromAPI.map((item, index) => (
-        <MovieCard
-          key={item.id}
-          image={item.poster_path}
-          rating={item.vote_average}
-          id={item.id}
-        />
-      ))}
+        {watchList[key]?.map(({ movie }) => (
+          <MovieCard
+            key={movie._id}
+            image={movie.posterUrl}
+            rating={movie.rating}
+            id={movie.movieId}
+            genre={movie.title}
+          />
+        ))}
       </div>
+      <Paginator />
     </div>
   );
 };

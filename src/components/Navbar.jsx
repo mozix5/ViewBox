@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+
 import { logout, validate } from "../redux/features/auth/authSlice";
 
 const Navbar = () => {
@@ -25,12 +26,13 @@ const Navbar = () => {
   return (
     <div className="text-white absolute right-0 left-0 z-20 p-4 flex items-center justify-between">
       <div
-        className=" font-sans  bg-clip-text text-4xl font-bold text-transparent uppercase"
+        className=" font-sans  bg-clip-text text-4xl font-bold text-transparent uppercase cursor-pointer"
         style={{
           backgroundImage:
             "linear-gradient(45deg, hsl(240deg 33% 99%), hsl(263deg 38% 53%))",
           padding: "4px",
         }}
+        onClick={() => navigate("/")}
       >
         viewbox
       </div>

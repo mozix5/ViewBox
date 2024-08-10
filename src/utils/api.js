@@ -12,8 +12,20 @@ export const GET = async ({ id, fetchUrl, category, page }) => {
   return response.data;
 };
 
-export const POST = async (endpoint, { body }) => {
+export const POST = async (endpoint, { body, headers }) => {
   const url = `${VIEWBOX_API}/${endpoint}`;
-  const response = await axios.post(url, body);
+  const response = await axios.post(url, body, headers);
+  return response.data;
+};
+
+export const GET_VIEWBOX = async (endpoint, headers) => {
+  const url = `${VIEWBOX_API}/${endpoint}`;
+  const response = await axios.get(url, headers);
+  return response.data;
+};
+
+export const DELETE_VIEWBOX = async (endpoint, headers) => {
+  const url = `${VIEWBOX_API}/${endpoint}`;
+  const response = await axios.delete(url, headers);
   return response.data;
 };

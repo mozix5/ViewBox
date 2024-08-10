@@ -2,8 +2,8 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { GET } from "../../../utils/api";
 
 const InitialState = {
-  data: {},
-  loading: {},
+  fetchedMovies: {},
+  isFetching: {},
   error: {},
 };
 
@@ -12,7 +12,7 @@ export const fetchMovies = createAsyncThunk(
   async ({ category, page = 1, fetchUrl, key }, { rejectWithValue }) => {
     try {
       const response = await GET({ fetchUrl, category, page });
-      return { key, data: response };
+      return { key, fetchedMovies:response };
     } catch (error) {
       return rejectWithValue({ key, error: error.message });
     }
@@ -20,23 +20,23 @@ export const fetchMovies = createAsyncThunk(
 );
 
 const fetchMoviesSlice = createSlice({
-  name: "movies",
+  name: "fetchMovies",
   initialState: InitialState,
   reducers: {},
   extraReducers: (builder) => {
     builder
       .addCase(fetchMovies.pending, (state, action) => {
         const { key } = action.meta.arg;
-        state.loading[key] = true;
+        state.isFetching[key] = true;
       })
       .addCase(fetchMovies.fulfilled, (state, action) => {
-        const { key, data } = action.payload;
-        state.loading[key] = false;
-        state.data[key] = data.results;
+        const { key, fetchedMovies } = action.payload;
+        state.isFetching[key] = false;
+        state.fetchedMovies[key] = fetchedMovies.results;
       })
       .addCase(fetchMovies.rejected, (state, action) => {
         const { key, error } = action.payload;
-        state.loading[key] = false;
+        state.isFetching[key] = false;
         state.error[key] = error;
       });
   },
