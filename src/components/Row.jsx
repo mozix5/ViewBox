@@ -4,7 +4,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { AiOutlineDoubleRight } from "react-icons/ai";
 
 import MovieCard from "./MovieCard";
-import Loader from "./Loader";
+import { MovieCardSkeleton } from "./Skeleton";
+
 
 import { fetchMovies } from "../redux/features/movies/fetchMoviesSlice";
 
@@ -26,9 +27,16 @@ const Row = ({ fetchURL, title }) => {
         <div>{title}</div>
         <AiOutlineDoubleRight />
       </div>
-      {isFetching[title] ? (
-        <Loader />
+      {isFetching[title] || !fetchedMovies[title] ? (
+        <div className="flex gap-[33px] overflow-x-hidden">
+          {[...Array(6)].map((_, i) => (
+            <div key={i} className="rounded-xl inline-block relative">
+              <MovieCardSkeleton />
+            </div>
+          ))}
+        </div>
       ) : (
+
         <div className=" whitespace-nowrap scroll-smooth scrollbar-hide break-words overflow-x-scroll snap-x snap-mandatory">
           {fetchedMovies[title]?.map((item) => {
             return (

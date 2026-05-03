@@ -10,6 +10,8 @@ import { useDispatch, useSelector } from "react-redux";
 
 import Modal from "../components/Modal";
 import LoadingSpinner from "../components/LoadingSpinner";
+import { MovieDetailsSkeleton } from "../components/Skeleton";
+
 
 import { fetchMovieById } from "../redux/features/movies/fetchMovieByIdSlice";
 import { checkMovie } from "../redux/features/movies/checkMovieSlice";
@@ -23,6 +25,8 @@ const MovieDetails = () => {
   const { id } = useParams();
   const [showModal, setShowModal] = useState(false);
   const { fetchedMovie, loading, error } = useSelector((state) => state.fetchMovieById);
+  const [imageLoaded, setImageLoaded] = useState(false);
+
   const { user, userToken } = useSelector((state) => state.auth);
   const { isMovieInWatchList, isChecking } = useSelector(
     (state) => state.checkMovie
@@ -41,7 +45,7 @@ const MovieDetails = () => {
       const endpoint = `${user._id}/${id}`;
       dispatch(checkMovie({ endpoint, headers }));
     }
-  }, [user._id, id, dispatch]);
+  }, [user?._id, id, dispatch]);
 
   const addToDb = async () => {
     if (user?._id) {
@@ -70,10 +74,15 @@ const MovieDetails = () => {
 
   const trailerId =
     fetchedMovie?.videos?.results?.find((vid) => vid.name === "Official Trailer") ||
-    fetchedMovie?.videos?.results[0];
+    fetchedMovie?.videos?.results?.[0];
+
+  if (loading || !fetchedMovie || Object.keys(fetchedMovie).length === 0) return <MovieDetailsSkeleton />;
+
+  if (error) return <div className="h-screen w-screen flex items-center justify-center text-white bg-black">Error: {error}</div>;
 
   return (
-    <div className="bg-gradient-to-t from-black h-screen w-screen flex items-center justify-center text-white overflow-x-hidden">
+
+    <div className="bg-gradient-to-t from-black h-screen w-screen flex items-center justify-center text-white overflow-x-hidden bg-black">
       {showModal && (
         <Modal setIsOpen={setShowModal}>
           <div className="relative">
@@ -102,11 +111,23 @@ const MovieDetails = () => {
       />
       <div className=" z-10 absolute bg-black opacity-50 top-0 left-0 right-0 bottom-0"></div>
       <div
-        className="absolute top-0 left-0 bottom-0 right-0 "
+        className="absolute top-0 left-0 bottom-0 right-0 bg-black"
         style={{
-          backgroundImage: `url(https://image.tmdb.org/t/p/original${
+          backgroundImage: fetchedMovie?.backdrop_path || fetchedMovie?.poster_path ? `url(https://image.tmdb.org/t/p/w300${
             fetchedMovie.backdrop_path || fetchedMovie.poster_path
-          })`,
+          })` : 'none',
+          backgroundSize: "cover",
+          backgroundRepeat: "no-repeat",
+          backgroundPosition: "center",
+          filter: "blur(20px)",
+        }}
+      ></div>
+      <div
+        className="absolute top-0 left-0 bottom-0 right-0 transition-opacity duration-1000"
+        style={{
+          backgroundImage: fetchedMovie?.backdrop_path || fetchedMovie?.poster_path ? `url(https://image.tmdb.org/t/p/w1280${
+            fetchedMovie.backdrop_path || fetchedMovie.poster_path
+          })` : 'none',
           backgroundSize: "cover",
           backgroundRepeat: "no-repeat",
           backgroundPosition: "center",
@@ -116,8 +137,9 @@ const MovieDetails = () => {
         <div>
           <img
             className="h-[360px] w-64 shadow-2xl rounded-xl object-cover"
-            src={`https://image.tmdb.org/t/p/w500${fetchedMovie.poster_path}`}
-            alt={fetchedMovie.title}
+            src={fetchedMovie?.poster_path ? `https://image.tmdb.org/t/p/w500${fetchedMovie.poster_path}` : ""}
+            alt={fetchedMovie?.title || "Movie Poster"}
+            loading="lazy"
           />
         </div>
         <div className="flex-1 px-4">

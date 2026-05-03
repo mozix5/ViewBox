@@ -3,8 +3,8 @@ import { GET } from "../../../utils/api";
 
 const InitialState = {
   fetchedMovie: {},
-  isFetching: false,
-  error: {},
+  loading: false,
+  error: null,
 };
 
 export const fetchMovieById = createAsyncThunk(
@@ -26,15 +26,16 @@ const fetchMovieByIdSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(fetchMovieById.pending, (state) => {
-        state.isFetching = true;
+        state.loading = true;
+        state.error = null;
       })
       .addCase(fetchMovieById.fulfilled, (state, action) => {
-        state.isFetching = false;
+        state.loading = false;
         state.fetchedMovie = action.payload;
       })
       .addCase(fetchMovieById.rejected, (state, action) => {
-        state.isFetching = false;
-        state.error = action.payload ? action.payload.error : "Unknown Error";
+        state.loading = false;
+        state.error = action.payload || "Unknown Error";
       });
   },
 });

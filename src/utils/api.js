@@ -1,11 +1,13 @@
 import axios from "axios";
 import { key, TMDB_API, VIEWBOX_API } from "./constants";
 
-export const GET = async ({ id, fetchUrl, category, page }) => {
+export const GET = async ({ id, fetchUrl, category, page, query }) => {
   const url = fetchUrl
     ? fetchUrl
     : id
     ? `${TMDB_API}/movie/${id}?api_key=${key}&append_to_response=videos`
+    : query
+    ? `${TMDB_API}/search/movie?api_key=${key}&query=${query}&language=en-US&page=${page}`
     : `${TMDB_API}/movie/${category}?api_key=${key}&language=en-US&page=${page}`;
 
   const response = await axios.get(url);
