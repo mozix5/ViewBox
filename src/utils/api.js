@@ -5,8 +5,8 @@ export const GET = async ({ id, fetchUrl, category, page }) => {
   const url = fetchUrl
     ? fetchUrl
     : id
-    ? `${TMDB_API}/${id}?api_key=${key}&append_to_response=videos`
-    : `${TMDB_API}/${category}?api_key=${key}&language=en-US&page=${page}`;
+    ? `${TMDB_API}/movie/${id}?api_key=${key}&append_to_response=videos`
+    : `${TMDB_API}/movie/${category}?api_key=${key}&language=en-US&page=${page}`;
 
   const response = await axios.get(url);
   return response.data;
