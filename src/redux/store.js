@@ -9,6 +9,7 @@ import removeMovieReducer from "./features/movies/removeMovieSlice";
 import searchMoviesReducer from "./features/movies/searchMovieSlice";
 import fetchReviewsReducer from "./features/reviews/fetchReviewsSlice";
 import addReviewReducer from "./features/reviews/addReviewSlice";
+import likeReviewReducer from "./features/reviews/likeReviewSlice";
 
 export const store = configureStore({
   reducer: {
@@ -22,5 +23,6 @@ export const store = configureStore({
     searchMovies: searchMoviesReducer,
     fetchReviews: fetchReviewsReducer,
     addReview: addReviewReducer,
+    likeReview: likeReviewReducer,
   },
 });

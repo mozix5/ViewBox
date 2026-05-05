@@ -10,9 +10,9 @@ const InitialState = {
 
 export const fetchMovies = createAsyncThunk(
   "movies/fetch",
-  async ({ category, page = 1, fetchUrl, key }, { rejectWithValue }) => {
+  async ({ category, page = 1, fetchUrl, key, filters }, { rejectWithValue }) => {
     try {
-      const response = await GET({ fetchUrl, category, page });
+      const response = await GET({ fetchUrl, category, page, filters });
       return { key, fetchedMovies:response };
     } catch (error) {
       return rejectWithValue({ key, error: error.message });

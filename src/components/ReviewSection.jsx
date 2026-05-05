@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchReviews } from "../redux/features/reviews/fetchReviewsSlice";
+import { fetchReviews, toggleReviewLike } from "../redux/features/reviews/fetchReviewsSlice";
 import { addReview } from "../redux/features/reviews/addReviewSlice";
-import { AiFillStar, AiOutlineStar } from "react-icons/ai";
+import { toggleLike } from "../redux/features/reviews/likeReviewSlice";
+import { AiFillStar, AiOutlineStar, AiFillHeart, AiOutlineHeart } from "react-icons/ai";
 import { setHeaders } from "../utils/constants";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
@@ -58,6 +59,22 @@ const ReviewSection = ({ movieId }) => {
       dispatch(fetchReviews({ movieId }));
     } else {
       toast.error(result.payload || "Failed to post review");
+    }
+  };
+
+  const handleToggleLike = async (reviewId) => {
+    if (!isAuthenticated) { toast.error("Login to like reviews!"); return; }
+    
+    // Optimistic update
+    dispatch(toggleReviewLike({ reviewId, userId: user._id }));
+    
+    const headers = setHeaders(userToken);
+    const result = await dispatch(toggleLike({ reviewId, headers }));
+    
+    if (toggleLike.rejected.match(result)) {
+      // Revert on error
+      dispatch(toggleReviewLike({ reviewId, userId: user._id }));
+      toast.error("Failed to update like");
     }
   };
 
@@ -218,37 +235,53 @@ const ReviewSection = ({ movieId }) => {
               ))}
             </div>
           ) : reviews?.length > 0 ? (
-            reviews.map((review) => (
-              <div
-                key={review._id}
-                className="group bg-white/5 hover:bg-white/8 border border-white/5 hover:border-white/15 rounded-2xl p-6 flex gap-5 transition-all duration-300"
-              >
-                <img
-                  src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${review.user?.username || "User"}&backgroundColor=c0aede`}
-                  alt="Avatar"
-                  className="w-12 h-12 rounded-full border-2 border-purple-500/30 shrink-0"
-                />
-                <div className="flex-1 min-w-0">
-                  <div className="flex flex-wrap justify-between items-start gap-2 mb-2">
-                    <div>
-                      <h4 className="font-bold text-white">{review.user?.username || "Unknown"}</h4>
-                      <div className="flex items-center gap-1 mt-1">
-                        {[...Array(5)].map((_, i) =>
-                          i < review.rating
-                            ? <AiFillStar key={i} className="text-yellow-400 text-sm" />
-                            : <AiOutlineStar key={i} className="text-gray-700 text-sm" />
-                        )}
-                        <span className="ml-1 text-xs text-yellow-400 font-medium">{review.rating}/5</span>
+            reviews.map((review) => {
+              const liked = review.likes?.includes(user?._id);
+              return (
+                <div
+                  key={review._id}
+                  className="group bg-white/5 hover:bg-white/8 border border-white/5 hover:border-white/15 rounded-2xl p-6 flex gap-5 transition-all duration-300"
+                >
+                  <img
+                    src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${review.user?.username || "User"}&backgroundColor=c0aede`}
+                    alt="Avatar"
+                    className="w-12 h-12 rounded-full border-2 border-purple-500/30 shrink-0"
+                  />
+                  <div className="flex-1 min-w-0">
+                    <div className="flex flex-wrap justify-between items-start gap-2 mb-2">
+                      <div>
+                        <h4 className="font-bold text-white">{review.user?.username || "Unknown"}</h4>
+                        <div className="flex items-center gap-1 mt-1">
+                          {[...Array(5)].map((_, i) =>
+                            i < review.rating
+                              ? <AiFillStar key={i} className="text-yellow-400 text-sm" />
+                              : <AiOutlineStar key={i} className="text-gray-700 text-sm" />
+                          )}
+                          <span className="ml-1 text-xs text-yellow-400 font-medium">{review.rating}/5</span>
+                        </div>
                       </div>
+                      <span className="text-xs text-gray-600 shrink-0 pt-1">
+                        {new Date(review.createdAt).toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" })}
+                      </span>
                     </div>
-                    <span className="text-xs text-gray-600 shrink-0 pt-1">
-                      {new Date(review.createdAt).toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" })}
-                    </span>
+                    <p className="text-gray-300 text-sm leading-relaxed whitespace-pre-wrap mb-4">{review.reviewText}</p>
+                    
+                    {/* Like button */}
+                    <button
+                      onClick={() => handleToggleLike(review._id)}
+                      className={`flex items-center gap-2 px-3 py-1.5 rounded-full transition-all text-xs font-semibold ${
+                        liked 
+                          ? "bg-purple-500/20 text-purple-400 border border-purple-500/30" 
+                          : "bg-white/5 text-gray-500 border border-white/5 hover:bg-white/10 hover:text-gray-300"
+                      }`}
+                    >
+                      {liked ? <AiFillHeart className="text-sm" /> : <AiOutlineHeart className="text-sm" />}
+                      <span>{review.likes?.length || 0} Helpful</span>
+                    </button>
                   </div>
-                  <p className="text-gray-300 text-sm leading-relaxed whitespace-pre-wrap">{review.reviewText}</p>
                 </div>
-              </div>
-            ))
+              );
+            })
           ) : (
             <div className="flex flex-col items-center justify-center py-16 gap-3 text-center">
               <div className="flex gap-1 text-4xl">

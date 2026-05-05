@@ -22,7 +22,21 @@ export const fetchReviews = createAsyncThunk(
 const fetchReviewsSlice = createSlice({
   name: "fetchReviews",
   initialState: initialState,
-  reducers: {},
+  reducers: {
+    toggleReviewLike: (state, action) => {
+      const { reviewId, userId } = action.payload;
+      const review = state.reviews.find((r) => r._id === reviewId);
+      if (review) {
+        if (!review.likes) review.likes = [];
+        const isLiked = review.likes.includes(userId);
+        if (isLiked) {
+          review.likes = review.likes.filter((id) => id !== userId);
+        } else {
+          review.likes.push(userId);
+        }
+      }
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchReviews.pending, (state) => {
@@ -39,4 +53,5 @@ const fetchReviewsSlice = createSlice({
   },
 });
 
+export const { toggleReviewLike } = fetchReviewsSlice.actions;
 export default fetchReviewsSlice.reducer;
