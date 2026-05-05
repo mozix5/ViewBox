@@ -1,25 +1,39 @@
 import React from "react";
+import { AiFillStar } from "react-icons/ai";
+import { useNavigate } from "react-router-dom";
 
-import { AiTwotoneStar } from "react-icons/ai";
-import { Link, useNavigate } from "react-router-dom";
-
-const MovieCard = ({ image, rating, id, genre }) => {
+const MovieCard = ({ image, rating, id, genre, title }) => {
   const navigate = useNavigate();
-  const handleClick = () => {
-    navigate(`/${genre}/${id}`);
-  };
+
   return (
-    <div className="h-80 w-56 relative" onClick={handleClick}>
+    <div
+      onClick={() => navigate(`/${genre}/${id}`)}
+      className="group relative h-72 w-48 rounded-2xl overflow-hidden cursor-pointer shrink-0 shadow-lg hover:shadow-2xl hover:shadow-black/60 transition-all duration-300 hover:-translate-y-2 hover:scale-105"
+    >
+      {/* Poster */}
       <img
-        className="h-full w-full rounded-xl object-cover"
+        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
         src={`https://image.tmdb.org/t/p/w500${image}`}
         loading="lazy"
+        alt={title || "Movie poster"}
       />
-      <div className="h-full w-full absolute top-0 left-0 right-0 hover:bg-black/40 opacity-0 hover:opacity-100 text-white px-5 py-3 rounded-xl transition-opacity ease-in-out duration-300">
-        <div className="flex items-center justify-end gap-3">
-          <AiTwotoneStar className=" text-yellow-400 text-lg" />
-          <div className=" font-semibold"> {rating}</div>
+
+      {/* Hover overlay */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4">
+        {title && (
+          <p className="text-white text-sm font-semibold leading-tight line-clamp-2 mb-2">{title}</p>
+        )}
+        <div className="flex items-center gap-1.5">
+          <AiFillStar className="text-yellow-400 text-sm" />
+          <span className="text-yellow-300 text-sm font-bold">{Number(rating).toFixed(1)}</span>
+          <span className="text-gray-400 text-xs">/10</span>
         </div>
+      </div>
+
+      {/* Rating pill — always visible top-right */}
+      <div className="absolute top-2 right-2 flex items-center gap-1 bg-black/60 backdrop-blur-sm px-2 py-0.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        <AiFillStar className="text-yellow-400 text-xs" />
+        <span className="text-white text-xs font-bold">{Number(rating).toFixed(1)}</span>
       </div>
     </div>
   );
