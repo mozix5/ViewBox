@@ -18,10 +18,11 @@ const SECTION_LABELS = {
 const ShowsList = () => {
   const params = useParams();
   const dispatch = useDispatch();
-  const { fetchedMovies, isFetching } = useSelector((state) => state.fetchMovies);
+  const { fetchedMovies, isFetching, totalPages } = useSelector((state) => state.fetchMovies);
 
   const searchParams = new URLSearchParams(window.location.search);
   const pageNum = parseInt(searchParams.get("page")) || 1;
+  const totalPageCount = totalPages[pageNum] || 1;
 
   useEffect(() => {
     dispatch(fetchMovies({ page: pageNum, category: params.genre, key: pageNum }));
@@ -44,7 +45,7 @@ const ShowsList = () => {
             <h1 className="text-4xl font-extrabold capitalize leading-none">{label}</h1>
           </div>
           <div className="ml-auto text-sm text-gray-600">
-            Page {pageNum}
+            Page {pageNum} of {totalPageCount}
           </div>
         </div>
 
@@ -64,7 +65,7 @@ const ShowsList = () => {
               ))}
         </div>
 
-        <Paginator />
+        <Paginator totalPages={totalPageCount} />
       </div>
     </div>
   );
