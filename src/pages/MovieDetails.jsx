@@ -11,6 +11,7 @@ import { useDispatch, useSelector } from "react-redux";
 import Modal from "../components/Modal";
 import LoadingSpinner from "../components/LoadingSpinner";
 import { MovieDetailsSkeleton } from "../components/Skeleton";
+import ReviewSection from "../components/ReviewSection";
 
 
 import { fetchMovieById } from "../redux/features/movies/fetchMovieByIdSlice";
@@ -82,7 +83,7 @@ const MovieDetails = () => {
 
   return (
 
-    <div className="bg-gradient-to-t from-black h-screen w-screen flex items-center justify-center text-white overflow-x-hidden bg-black">
+    <div className="bg-gradient-to-t from-black min-h-screen w-screen flex flex-col items-center text-white overflow-x-hidden bg-black">
       {showModal && (
         <Modal setIsOpen={setShowModal}>
           <div className="relative">
@@ -109,84 +110,88 @@ const MovieDetails = () => {
         pauseOnHover
         theme="dark"
       />
-      <div className=" z-10 absolute bg-black opacity-50 top-0 left-0 right-0 bottom-0"></div>
-      <div
-        className="absolute top-0 left-0 bottom-0 right-0 bg-black"
-        style={{
-          backgroundImage: fetchedMovie?.backdrop_path || fetchedMovie?.poster_path ? `url(https://image.tmdb.org/t/p/w300${
-            fetchedMovie.backdrop_path || fetchedMovie.poster_path
-          })` : 'none',
-          backgroundSize: "cover",
-          backgroundRepeat: "no-repeat",
-          backgroundPosition: "center",
-          filter: "blur(20px)",
-        }}
-      ></div>
-      <div
-        className="absolute top-0 left-0 bottom-0 right-0 transition-opacity duration-1000"
-        style={{
-          backgroundImage: fetchedMovie?.backdrop_path || fetchedMovie?.poster_path ? `url(https://image.tmdb.org/t/p/w1280${
-            fetchedMovie.backdrop_path || fetchedMovie.poster_path
-          })` : 'none',
-          backgroundSize: "cover",
-          backgroundRepeat: "no-repeat",
-          backgroundPosition: "center",
-        }}
-      ></div>
-      <div className="flex gap-6 items-center w-[90%] lg:w-[58%] z-20">
-        <div>
-          <img
-            className="h-[360px] w-64 shadow-2xl rounded-xl object-cover"
-            src={fetchedMovie?.poster_path ? `https://image.tmdb.org/t/p/w500${fetchedMovie.poster_path}` : ""}
-            alt={fetchedMovie?.title || "Movie Poster"}
-            loading="lazy"
-          />
-        </div>
-        <div className="flex-1 px-4">
-          <div className="text-4xl font-bold">{fetchedMovie?.title}</div>
-          <div className="flex items-center gap-4 py-3">
-            <div className="flex items-center gap-3 text-3xl">
-              <AiTwotoneStar className="text-yellow-400" />
-              {fetchedMovie?.vote_average?.toFixed(1)}
-            </div>
-            <div>
-              <div className="flex gap-6 text-sm">
-                <div>Released: {fetchedMovie?.release_date}</div>
-                <div>{fetchedMovie?.runtime} min</div>
-              </div>
-              <div className="flex gap-4">
-                {fetchedMovie?.genres?.map((item, index) => (
-                  <div className="text-sm" key={index}>
-                    {item.name}
-                  </div>
-                ))}
-              </div>
-            </div>
+      
+      <div className="relative w-full h-screen flex items-center justify-center shrink-0">
+        <div className=" z-10 absolute bg-black opacity-50 top-0 left-0 right-0 bottom-0"></div>
+        <div
+          className="absolute top-0 left-0 bottom-0 right-0 bg-black"
+          style={{
+            backgroundImage: fetchedMovie?.backdrop_path || fetchedMovie?.poster_path ? `url(https://image.tmdb.org/t/p/w300${
+              fetchedMovie.backdrop_path || fetchedMovie.poster_path
+            })` : 'none',
+            backgroundSize: "cover",
+            backgroundRepeat: "no-repeat",
+            backgroundPosition: "center",
+            filter: "blur(20px)",
+          }}
+        ></div>
+        <div
+          className="absolute top-0 left-0 bottom-0 right-0 transition-opacity duration-1000"
+          style={{
+            backgroundImage: fetchedMovie?.backdrop_path || fetchedMovie?.poster_path ? `url(https://image.tmdb.org/t/p/w1280${
+              fetchedMovie.backdrop_path || fetchedMovie.poster_path
+            })` : 'none',
+            backgroundSize: "cover",
+            backgroundRepeat: "no-repeat",
+            backgroundPosition: "center",
+          }}
+        ></div>
+        <div className="flex gap-6 items-center w-[90%] lg:w-[58%] z-20">
+          <div>
+            <img
+              className="h-[360px] w-64 shadow-2xl rounded-xl object-cover"
+              src={fetchedMovie?.poster_path ? `https://image.tmdb.org/t/p/w500${fetchedMovie.poster_path}` : ""}
+              alt={fetchedMovie?.title || "Movie Poster"}
+              loading="lazy"
+            />
           </div>
-          <div className="pb-3 text-sm">{fetchedMovie?.overview}</div>
-          <div className="py-2 flex gap-4 items-center">
-            <button
-              onClick={() => setShowModal(true)}
-              className="bg-transparent border-2 cursor-pointer border-white rounded-3xl px-10 py-1"
-            >
-              Trailer
-            </button>
-            {isAdding || isChecking ? (
-              <LoadingSpinner />
-            ) : isMovieInWatchList ? (
-              <FaHeart
-                className="text-red-500 text-2xl cursor-pointer"
-                onClick={deleteFromDb}
-              />
-            ) : (
-              <FaRegHeart
-                className="text-2xl cursor-pointer"
-                onClick={addToDb}
-              />
-            )}
+          <div className="flex-1 px-4">
+            <div className="text-4xl font-bold">{fetchedMovie?.title}</div>
+            <div className="flex items-center gap-4 py-3">
+              <div className="flex items-center gap-3 text-3xl">
+                <AiTwotoneStar className="text-yellow-400" />
+                {fetchedMovie?.vote_average?.toFixed(1)}
+              </div>
+              <div>
+                <div className="flex gap-6 text-sm">
+                  <div>Released: {fetchedMovie?.release_date}</div>
+                  <div>{fetchedMovie?.runtime} min</div>
+                </div>
+                <div className="flex gap-4">
+                  {fetchedMovie?.genres?.map((item, index) => (
+                    <div className="text-sm" key={index}>
+                      {item.name}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+            <div className="pb-3 text-sm">{fetchedMovie?.overview}</div>
+            <div className="py-2 flex gap-4 items-center">
+              <button
+                onClick={() => setShowModal(true)}
+                className="bg-transparent border-2 cursor-pointer border-white rounded-3xl px-10 py-1"
+              >
+                Trailer
+              </button>
+              {isAdding || isChecking ? (
+                <LoadingSpinner />
+              ) : isMovieInWatchList ? (
+                <FaHeart
+                  className="text-red-500 text-2xl cursor-pointer"
+                  onClick={deleteFromDb}
+                />
+              ) : (
+                <FaRegHeart
+                  className="text-2xl cursor-pointer"
+                  onClick={addToDb}
+                />
+              )}
+            </div>
           </div>
         </div>
       </div>
+      <ReviewSection movieId={id} />
     </div>
   );
 };

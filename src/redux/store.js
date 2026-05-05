@@ -7,7 +7,8 @@ import checkMovieReducer from "./features/movies/checkMovieSlice";
 import fetchWatchListReducer from "./features/movies/fetchWatchListSlice";
 import removeMovieReducer from "./features/movies/removeMovieSlice";
 import searchMoviesReducer from "./features/movies/searchMovieSlice";
-
+import fetchReviewsReducer from "./features/reviews/fetchReviewsSlice";
+import addReviewReducer from "./features/reviews/addReviewSlice";
 
 export const store = configureStore({
   reducer: {
@@ -19,6 +20,7 @@ export const store = configureStore({
     fetchWatchList: fetchWatchListReducer,
     removeMovie: removeMovieReducer,
     searchMovies: searchMoviesReducer,
+    fetchReviews: fetchReviewsReducer,
+    addReview: addReviewReducer,
   },
-
 });

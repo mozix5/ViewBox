@@ -127,7 +127,14 @@ const Navbar = () => {
         </div>
       ) : (
         <div className="flex gap-6 items-center">
-          <div className="text-sm font-medium text-purple-300">{user?.username}</div>
+          <Link to="/profile" className="flex items-center gap-2 group">
+            <img 
+              src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.username || 'User'}&backgroundColor=c0aede`} 
+              alt="Avatar" 
+              className="w-8 h-8 rounded-full border border-white/20 group-hover:border-purple-400 transition-colors"
+            />
+            <div className="text-sm font-medium text-purple-300 group-hover:text-purple-400 transition-colors">{user?.username}</div>
+          </Link>
           <button className="text-sm hover:text-purple-400 transition-colors" onClick={() => navigate("/watchList")}>Watchlist</button>
           <button className="text-sm hover:text-purple-400 transition-colors" onClick={handleSignOut}>Sign Out</button>
         </div>

@@ -20,7 +20,7 @@ const WatchList = () => {
 
   useEffect(() => {
     if (user?._id && key) {
-      const endpoint = `${user?._id}/${search}`;
+      const endpoint = `${user?._id}${search}`;
       dispatch(fetchWatchList({ endpoint, headers, key }));
     }
   }, [user, dispatch, fetchWatchList, search, key]);
@@ -30,7 +30,7 @@ const WatchList = () => {
       const endpoint = `${user._id}/${movieId}`;
       await dispatch(removeMovie({ endpoint, headers }));
       
-      const fetchEndpoint = `${user._id}/${search}`;
+      const fetchEndpoint = `${user._id}${search}`;
       dispatch(fetchWatchList({ endpoint: fetchEndpoint, headers, key }));
     }
   };
