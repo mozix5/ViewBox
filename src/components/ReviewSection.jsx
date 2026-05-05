@@ -7,6 +7,7 @@ import { AiFillStar, AiOutlineStar, AiFillHeart, AiOutlineHeart } from "react-ic
 import { setHeaders } from "../utils/constants";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { ReviewSkeleton } from "./Skeleton";
 
 const ratingLabels = ["", "Terrible", "Bad", "Okay", "Good", "Excellent"];
 
@@ -221,19 +222,7 @@ const ReviewSection = ({ movieId }) => {
         {/* ── Reviews List ── */}
         <div className="flex flex-col gap-5">
           {isFetching ? (
-            <div className="flex flex-col gap-4">
-              {[...Array(3)].map((_, i) => (
-                <div key={i} className="bg-white/5 rounded-2xl p-6 animate-pulse flex gap-4">
-                  <div className="w-12 h-12 bg-white/10 rounded-full shrink-0" />
-                  <div className="flex-1 flex flex-col gap-2">
-                    <div className="h-3 bg-white/10 rounded w-1/4" />
-                    <div className="h-3 bg-white/10 rounded w-1/3" />
-                    <div className="h-3 bg-white/10 rounded w-full mt-2" />
-                    <div className="h-3 bg-white/10 rounded w-3/4" />
-                  </div>
-                </div>
-              ))}
-            </div>
+            <ReviewSkeleton />
           ) : reviews?.length > 0 ? (
             reviews.map((review) => {
               const liked = review.likes?.includes(user?._id);

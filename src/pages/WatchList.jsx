@@ -8,12 +8,13 @@ import { MdMovieFilter } from "react-icons/md";
 import { setHeaders } from "../utils/constants";
 import { fetchWatchList } from "../redux/features/movies/fetchWatchListSlice";
 import { removeMovie } from "../redux/features/movies/removeMovieSlice";
+import { MovieCardSkeleton } from "../components/Skeleton";
 
 const WatchList = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { user, userToken } = useSelector((state) => state.auth);
-  const { watchList } = useSelector((state) => state.fetchWatchList);
+  const { watchList, isFetching } = useSelector((state) => state.fetchWatchList);
   const headers = setHeaders(userToken);
   const { search } = useLocation();
   const key = search.split("=")[1] || 1;
@@ -35,6 +36,7 @@ const WatchList = () => {
   };
 
   const movies = watchList[key] || [];
+  const fetching = isFetching[key];
 
   return (
     <div className="min-h-screen bg-black text-white relative">
@@ -54,7 +56,7 @@ const WatchList = () => {
             </div>
           </div>
 
-          {movies.length > 0 && (
+          {!fetching && movies.length > 0 && (
             <div className="flex items-center gap-2 bg-white/6 border border-white/10 rounded-2xl px-5 py-3">
               <FiBookmark className="text-purple-400" />
               <span className="text-2xl font-bold text-white">{movies.length}</span>
@@ -65,27 +67,35 @@ const WatchList = () => {
           )}
         </div>
 
-        {/* ── Empty state ── */}
-        {movies.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-32 gap-6 text-center">
-            <div className="w-24 h-24 rounded-3xl bg-white/5 border border-white/10 flex items-center justify-center mb-2">
-              <MdMovieFilter className="text-5xl text-gray-600" />
+        {/* ── Grid / States ── */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-5">
+          {fetching ? (
+            /* Loading state */
+            [...Array(12)].map((_, i) => (
+              <div key={i} className="flex justify-center">
+                <MovieCardSkeleton />
+              </div>
+            ))
+          ) : movies.length === 0 ? (
+            /* Empty state */
+            <div className="col-span-full flex flex-col items-center justify-center py-32 gap-6 text-center">
+              <div className="w-24 h-24 rounded-3xl bg-white/5 border border-white/10 flex items-center justify-center mb-2">
+                <MdMovieFilter className="text-5xl text-gray-600" />
+              </div>
+              <h2 className="text-3xl font-bold text-white">Nothing saved yet</h2>
+              <p className="text-gray-500 max-w-sm leading-relaxed">
+                Browse movies and tap the bookmark icon to build your personal watchlist.
+              </p>
+              <button
+                onClick={() => navigate("/")}
+                className="mt-2 bg-gradient-to-r from-purple-600 to-violet-500 hover:from-purple-500 hover:to-violet-400 text-white font-bold px-8 py-3 rounded-full transition-all hover:scale-105 active:scale-95 shadow-lg shadow-purple-500/30"
+              >
+                Discover Movies
+              </button>
             </div>
-            <h2 className="text-3xl font-bold text-white">Nothing saved yet</h2>
-            <p className="text-gray-500 max-w-sm leading-relaxed">
-              Browse movies and tap the bookmark icon to build your personal watchlist.
-            </p>
-            <button
-              onClick={() => navigate("/")}
-              className="mt-2 bg-gradient-to-r from-purple-600 to-violet-500 hover:from-purple-500 hover:to-violet-400 text-white font-bold px-8 py-3 rounded-full transition-all hover:scale-105 active:scale-95 shadow-lg shadow-purple-500/30"
-            >
-              Discover Movies
-            </button>
-          </div>
-        ) : (
-          /* ── Grid ── */
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-5">
-            {movies.map(({ movie }) => (
+          ) : (
+            /* Movies list */
+            movies.map(({ movie }) => (
               <div
                 key={movie._id}
                 className="group relative h-72 w-full rounded-2xl overflow-hidden cursor-pointer shadow-lg hover:shadow-2xl hover:shadow-black/60 transition-all duration-300 hover:-translate-y-2 hover:scale-105"
@@ -121,9 +131,9 @@ const WatchList = () => {
                   <FiTrash2 className="text-sm" />
                 </button>
               </div>
-            ))}
-          </div>
-        )}
+            ))
+          )}
+        </div>
       </div>
     </div>
   );

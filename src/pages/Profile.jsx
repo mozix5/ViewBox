@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { logout } from "../redux/features/auth/authSlice";
 import { fetchWatchList } from "../redux/features/movies/fetchWatchListSlice";
 import { setHeaders } from "../utils/constants";
-import LoadingSpinner from "../components/LoadingSpinner";
+import { ProfileSkeleton } from "../components/Skeleton";
 import { AiFillStar, AiOutlineStar } from "react-icons/ai";
 import { MdOutlineBookmarkBorder, MdLogout, MdEmail } from "react-icons/md";
 
@@ -30,7 +30,7 @@ const Profile = () => {
     navigate("/login");
   };
 
-  if (!user) return <LoadingSpinner />;
+  if (!user) return <div className="bg-black min-h-screen"><ProfileSkeleton /></div>;
 
   const watchListCount = watchList[1]?.length || 0;
   const memberSince = user?.createdAt
