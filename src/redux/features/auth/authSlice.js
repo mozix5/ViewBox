@@ -22,7 +22,21 @@ export const login = createAsyncThunk(
       localStorage.setItem("user", JSON.stringify(response.user));
       return response;
     } catch (error) {
-      return rejectWithValue(error.message);
+      return rejectWithValue(error.response?.data?.message || error.message);
+    }
+  }
+);
+
+export const signup = createAsyncThunk(
+  "auth/signup",
+  async ({ body }, { rejectWithValue }) => {
+    try {
+      const response = await POST("users/signup", { body });
+      localStorage.setItem("userToken", JSON.stringify(response.token));
+      localStorage.setItem("user", JSON.stringify(response.user));
+      return response;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || error.message);
     }
   }
 );
@@ -44,16 +58,33 @@ const authSlice = createSlice({
     builder
       .addCase(login.pending, (state) => {
         state.loading = true;
+        state.error = "";
       })
       .addCase(login.fulfilled, (state, { payload }) => {
         state.loading = false;
         state.user = payload.user;
         state.userToken = payload.token;
         state.isAuthenticated = true;
+        state.error = "";
       })
-      .addCase(login.rejected, (state) => {
+      .addCase(login.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload ? action.payload.error : "Unknown Error";
+        state.error = action.payload || "Unknown Error";
+      })
+      .addCase(signup.pending, (state) => {
+        state.loading = true;
+        state.error = "";
+      })
+      .addCase(signup.fulfilled, (state, { payload }) => {
+        state.loading = false;
+        state.user = payload.user;
+        state.userToken = payload.token;
+        state.isAuthenticated = true;
+        state.error = "";
+      })
+      .addCase(signup.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || "Unknown Error";
       })
       .addCase(logout.fulfilled, (state) => {
         state.loading = false;

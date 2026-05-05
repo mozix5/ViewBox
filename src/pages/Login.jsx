@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import bg from "../assets/bg.jpg";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import Loader from "../components/Loader";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
@@ -84,11 +84,17 @@ const Login = () => {
                 </div>
                 <div className="text-[#346BD4]">Forgot Password?</div>
                 <button
-                  className="bg-purple-700 text-white mt-6 h-8 rounded-lg w-[100%] font-bold"
+                  className="bg-purple-700 hover:bg-purple-800 transition-colors text-white mt-6 h-10 rounded-lg w-full font-bold uppercase tracking-wider"
                   type="submit"
                 >
                   Sign in
                 </button>
+                <div className="mt-6 text-center text-sm">
+                  Don't have an account?{" "}
+                  <Link to="/signup" className="text-purple-400 hover:underline">
+                    Sign Up
+                  </Link>
+                </div>
               </form>
             </div>
           </div>
