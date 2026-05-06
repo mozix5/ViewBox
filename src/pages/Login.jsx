@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
-import { login } from "../redux/features/auth/authSlice";
+import { login } from "../redux/features/user/authSlice";
 import { FiMail, FiLock, FiEye, FiEyeOff } from "react-icons/fi";
 
 const InputField = React.forwardRef(({ label, icon: Icon, error, type = "text", ...rest }, ref) => {

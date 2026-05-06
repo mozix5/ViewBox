@@ -4,6 +4,7 @@ import { userService } from "../../../services/userService";
 const initialState = {
   watchList: {},
   isFetching: {},
+  isUpdating: {}, // Track loading state for individual movie IDs
   error: {},
   inWatchlist: {}, // cache for individual movie checks
 };
@@ -49,7 +50,7 @@ export const checkWatchlist = createAsyncThunk(
   async ({ userId, movieId }, { rejectWithValue }) => {
     try {
       const { data } = await userService.checkWatchlist(userId, movieId);
-      return { movieId, exists: data.exists };
+      return { movieId, exists: data.isMovieInWatchList };
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || error.message);
     }
@@ -87,14 +88,40 @@ const watchlistSlice = createSlice({
         state.error[key] = error;
       })
       // Check
+      .addCase(checkWatchlist.pending, (state, action) => {
+        state.isUpdating[action.meta.arg.movieId] = true;
+      })
       .addCase(checkWatchlist.fulfilled, (state, action) => {
         const { movieId, exists } = action.payload;
+        state.isUpdating[movieId] = false;
         state.inWatchlist[movieId] = exists;
       })
+      .addCase(checkWatchlist.rejected, (state, action) => {
+        state.isUpdating[action.meta.arg.movieId] = false;
+      })
       // Add
+      .addCase(addToWatchlist.pending, (state, action) => {
+        state.isUpdating[action.meta.arg.body.movieId] = true;
+      })
       .addCase(addToWatchlist.fulfilled, (state, action) => {
         const { movieId } = action.meta.arg.body;
+        state.isUpdating[movieId] = false;
         state.inWatchlist[movieId] = true;
+      })
+      .addCase(addToWatchlist.rejected, (state, action) => {
+        state.isUpdating[action.meta.arg.body.movieId] = false;
+      })
+      // Remove
+      .addCase(removeFromWatchlist.pending, (state, action) => {
+        state.isUpdating[action.meta.arg.movieId] = true;
+      })
+      .addCase(removeFromWatchlist.fulfilled, (state, action) => {
+        const { movieId } = action.payload;
+        state.isUpdating[movieId] = false;
+        state.inWatchlist[movieId] = false;
+      })
+      .addCase(removeFromWatchlist.rejected, (state, action) => {
+        state.isUpdating[action.meta.arg.movieId] = false;
       });
   },
 });

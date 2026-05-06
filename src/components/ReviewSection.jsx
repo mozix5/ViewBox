@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchReviews, toggleReviewLike } from "../redux/features/reviews/fetchReviewsSlice";
-import { addReview } from "../redux/features/reviews/addReviewSlice";
-import { toggleLike } from "../redux/features/reviews/likeReviewSlice";
+import { fetchReviews, addReview, toggleReviewLike } from "../redux/features/user/reviewSlice";
 import { AiFillStar, AiOutlineStar, AiFillHeart, AiOutlineHeart } from "react-icons/ai";
+import { CgSpinner } from "react-icons/cg";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { ReviewSkeleton } from "./Skeleton";
@@ -30,8 +29,7 @@ const StarBar = ({ star, count, total }) => {
 const ReviewSection = ({ movieId }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { reviews, isFetching } = useSelector((state) => state.fetchReviews);
-  const { isAdding } = useSelector((state) => state.addReview);
+  const { reviews, isFetching, isAdding, isUpdating } = useSelector((state) => state.reviews);
   const { user, isAuthenticated } = useSelector((state) => state.auth);
 
   const [rating, setRating] = useState(0);
@@ -55,7 +53,6 @@ const ReviewSection = ({ movieId }) => {
       setRating(0);
       setReviewText("");
       toast.success("✨ Review posted!");
-      dispatch(fetchReviews({ movieId }));
     } else {
       toast.error(result.payload || "Failed to post review");
     }
@@ -63,16 +60,9 @@ const ReviewSection = ({ movieId }) => {
 
   const handleToggleLike = async (reviewId) => {
     if (!isAuthenticated) { toast.error("Login to like reviews!"); return; }
-    
-    // Optimistic update
-    dispatch(toggleReviewLike({ reviewId, userId: user._id }));
-    
-    const result = await dispatch(toggleLike({ reviewId }));
-    
-    if (toggleLike.rejected.match(result)) {
-      // Revert on error
-      dispatch(toggleReviewLike({ reviewId, userId: user._id }));
-      toast.error("Failed to update like");
+    const result = await dispatch(toggleReviewLike({ reviewId }));
+    if (toggleReviewLike.rejected.match(result)) {
+      toast.error(result.payload || "Failed to update like");
     }
   };
 
@@ -261,7 +251,13 @@ const ReviewSection = ({ movieId }) => {
                           : "bg-white/5 text-gray-500 border border-white/5 hover:bg-white/10 hover:text-gray-300"
                       }`}
                     >
-                      {liked ? <AiFillHeart className="text-sm" /> : <AiOutlineHeart className="text-sm" />}
+                      {isUpdating[review._id] ? (
+                        <CgSpinner className="animate-spin text-sm" />
+                      ) : liked ? (
+                        <AiFillHeart className="text-sm" />
+                      ) : (
+                        <AiOutlineHeart className="text-sm" />
+                      )}
                       <span>{review.likes?.length || 0} Helpful</span>
                     </button>
                   </div>

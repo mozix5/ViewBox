@@ -1,12 +1,10 @@
 import { configureStore } from "@reduxjs/toolkit";
 import fetchMoviesReducer from "./features/movies/fetchMoviesSlice";
 import fetchMovieByIdReducer from "./features/movies/fetchMovieByIdSlice";
-import authReducer from "./features/auth/authSlice";
+import authReducer from "./features/user/authSlice";
 import searchMoviesReducer from "./features/movies/searchMovieSlice";
-import watchlistReducer from "./features/movies/watchlistSlice";
-import fetchReviewsReducer from "./features/reviews/fetchReviewsSlice";
-import addReviewReducer from "./features/reviews/addReviewSlice";
-import likeReviewReducer from "./features/reviews/likeReviewSlice";
+import watchlistReducer from "./features/user/watchlistSlice";
+import reviewReducer from "./features/user/reviewSlice";
 
 export const store = configureStore({
   reducer: {
@@ -15,8 +13,6 @@ export const store = configureStore({
     auth: authReducer,
     watchlist: watchlistReducer,
     searchMovies: searchMoviesReducer,
-    fetchReviews: fetchReviewsReducer,
-    addReview: addReviewReducer,
-    likeReview: likeReviewReducer,
+    reviews: reviewReducer,
   },
 });

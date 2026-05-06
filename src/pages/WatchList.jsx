@@ -5,7 +5,7 @@ import { AiFillStar } from "react-icons/ai";
 import { FiBookmark, FiTrash2 } from "react-icons/fi";
 import { MdMovieFilter } from "react-icons/md";
 
-import { fetchWatchList, removeOptimistic, removeFromWatchlist } from "../redux/features/movies/watchlistSlice";
+import { fetchWatchList, removeOptimistic, removeFromWatchlist } from "../redux/features/user/watchlistSlice";
 import { MovieCardSkeleton } from "../components/Skeleton";
 
 const WatchList = () => {

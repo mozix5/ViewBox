@@ -19,7 +19,7 @@ import {
   checkWatchlist, 
   addToWatchlist, 
   removeFromWatchlist 
-} from "../redux/features/movies/watchlistSlice";
+} from "../redux/features/user/watchlistSlice";
 
 const MovieDetails = () => {
   const dispatch = useDispatch();
@@ -30,7 +30,7 @@ const MovieDetails = () => {
 
   const { user, isAuthenticated } = useSelector((state) => state.auth);
   const inWatchlist = useSelector((state) => state.watchlist.inWatchlist[id]);
-  const isChecking = useSelector((state) => state.watchlist.isFetching[id]);
+  const isUpdating = useSelector((state) => state.watchlist.isUpdating[id]);
 
   useEffect(() => {
     if (id) {
@@ -55,7 +55,7 @@ const MovieDetails = () => {
       userId: user._id,
       title: fetchedMovie.title,
       rating: fetchedMovie.vote_average,
-      genre: fetchedMovie.genres?.[0]?.name || "movie",
+      genre: fetchedMovie.genres || [],
       posterUrl: fetchedMovie.poster_path,
     };
     await dispatch(addToWatchlist({ body }));
@@ -168,7 +168,7 @@ const MovieDetails = () => {
               >
                 Trailer
               </button>
-              {isChecking ? (
+              {isUpdating ? (
                 <LoadingSpinner />
               ) : inWatchlist ? (
                 <FaHeart

@@ -14,5 +14,5 @@ export const userService = {
   // Reviews
   getReviews: (movieId) => viewboxClient.get(`/reviews/${movieId}`),
   addReview: (body) => viewboxClient.post("/reviews", body),
-  toggleReviewLike: (reviewId) => viewboxClient.post(`/reviews/like/${reviewId}`),
+  toggleReviewLike: (reviewId) => viewboxClient.post(`/reviews/toggle-like/${reviewId}`),
 };

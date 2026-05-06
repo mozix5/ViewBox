@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { FiSearch, FiBookmark, FiUser, FiLogOut, FiX } from "react-icons/fi";
 import { AiFillStar } from "react-icons/ai";
 import { searchMovies, clearSearch } from "../redux/features/movies/searchMovieSlice";
-import { logout, validate } from "../redux/features/auth/authSlice";
+import { logout, validate } from "../redux/features/user/authSlice";
 
 const Navbar = () => {
   const { user, isAuthenticated, userToken } = useSelector((state) => state.auth);

@@ -5,13 +5,15 @@ import { requests } from "../assets/requests";
 import { AiFillStar } from "react-icons/ai";
 import { BsPlayCircleFill, BsBookmark, BsBookmarkFill } from "react-icons/bs";
 import { HiOutlineInformationCircle } from "react-icons/hi";
+import { CgSpinner } from "react-icons/cg";
 import { HeroSkeleton } from "./Skeleton";
 import { useDispatch, useSelector } from "react-redux";
 import { 
   checkWatchlist, 
   addToWatchlist, 
   removeFromWatchlist 
-} from "../redux/features/movies/watchlistSlice";
+} from "../redux/features/user/watchlistSlice";
+import { GENRES } from "../config/movieConfig";
 import { toast } from "react-toastify";
 
 const Hero = () => {
@@ -22,6 +24,7 @@ const Hero = () => {
   const { user } = useSelector((state) => state.auth);
   const movie = data[index];
   const isMovieInWatchList = useSelector((state) => state.watchlist.inWatchlist[movie?.id]);
+  const isUpdating = useSelector((state) => state.watchlist.isUpdating);
 
   useEffect(() => {
     axios.get(requests.requestNowPlaying).then((res) => {
@@ -52,7 +55,10 @@ const Hero = () => {
           userId: user._id, 
           title: movie.title, 
           rating: movie.vote_average, 
-          genre: [], 
+          genre: movie.genre_ids?.map(id => ({ 
+            id, 
+            name: GENRES.find(g => g.id === id)?.name || "Unknown" 
+          })) || [], 
           posterUrl: movie.poster_path 
         }
       }));
@@ -132,14 +138,26 @@ const Hero = () => {
 
           <button
             onClick={handleWatchlist}
+            disabled={isUpdating[movie?.id]}
             className={`flex items-center gap-2 font-semibold px-7 py-3 rounded-full border transition-all hover:scale-105 active:scale-95 text-sm backdrop-blur-sm ${
               isMovieInWatchList
-                ? "bg-purple-600/80 border-purple-500 text-white shadow-purple-500/30 shadow-lg"
+                ? "bg-purple-600/20 border-purple-500/40 text-purple-400"
                 : "bg-white/10 border-white/20 text-white hover:bg-white/20"
-            }`}
+            } ${isUpdating[movie?.id] ? "opacity-70 cursor-not-allowed" : ""}`}
           >
-            {isMovieInWatchList ? <BsBookmarkFill /> : <BsBookmark />}
-            {isMovieInWatchList ? "Saved" : "Watchlist"}
+            {isUpdating[movie?.id] ? (
+              <CgSpinner className="animate-spin text-lg" />
+            ) : isMovieInWatchList ? (
+              <>
+                <BsBookmarkFill />
+                In Watchlist
+              </>
+            ) : (
+              <>
+                <BsBookmark />
+                Watchlist
+              </>
+            )}
           </button>
 
           <button

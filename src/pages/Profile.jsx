@@ -1,8 +1,8 @@
 import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { logout } from "../redux/features/auth/authSlice";
-import { fetchWatchList } from "../redux/features/movies/watchlistSlice";
+import { logout } from "../redux/features/user/authSlice";
+import { fetchWatchList } from "../redux/features/user/watchlistSlice";
 import { ProfileSkeleton } from "../components/Skeleton";
 import { AiFillStar, AiOutlineStar } from "react-icons/ai";
 import { MdOutlineBookmarkBorder, MdLogout, MdEmail } from "react-icons/md";
