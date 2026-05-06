@@ -2,7 +2,7 @@ import React from "react";
 
 const Skeleton = ({ className }) => (
   <div className={`relative overflow-hidden bg-white/5 rounded-xl ${className}`}>
-    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full animate-shimmer" />
+    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full animate-shimmer will-change-transform" />
   </div>
 );
 
