@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { GET_VIEWBOX } from "../../../utils/api";
+import { userService } from "../../../services/userService";
 
 const initialState = {
   reviews: [],
@@ -11,10 +11,10 @@ export const fetchReviews = createAsyncThunk(
   "reviews/fetch",
   async ({ movieId }, { rejectWithValue }) => {
     try {
-      const response = await GET_VIEWBOX(`reviews/${movieId}`);
-      return response;
+      const { data } = await userService.getReviews(movieId);
+      return data;
     } catch (error) {
-      return rejectWithValue(error.message);
+      return rejectWithValue(error.response?.data?.message || "Failed to fetch reviews");
     }
   }
 );

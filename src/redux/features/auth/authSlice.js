@@ -1,15 +1,15 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { POST } from "../../../utils/api";
+import { userService } from "../../../services/userService";
 
 const userToken = localStorage.getItem("userToken")
   ? JSON.parse(localStorage.getItem("userToken"))
   : null;
 
 const InitialState = {
-  user: {},
+  user: JSON.parse(localStorage.getItem("user")) || {},
   userToken,
   loading: false,
-  isAuthenticated: false,
+  isAuthenticated: !!userToken,
   error: "",
 };
 
@@ -17,12 +17,12 @@ export const login = createAsyncThunk(
   "auth/login",
   async ({ body }, { rejectWithValue }) => {
     try {
-      const response = await POST("users/login", { body });
-      localStorage.setItem("userToken", JSON.stringify(response.token));
-      localStorage.setItem("user", JSON.stringify(response.user));
-      return response;
+      const { data } = await userService.login(body);
+      localStorage.setItem("userToken", JSON.stringify(data.token));
+      localStorage.setItem("user", JSON.stringify(data.user));
+      return data;
     } catch (error) {
-      return rejectWithValue(error.response?.data?.message || error.message);
+      return rejectWithValue(error.response?.data?.message || "Login failed");
     }
   }
 );
@@ -31,18 +31,19 @@ export const signup = createAsyncThunk(
   "auth/signup",
   async ({ body }, { rejectWithValue }) => {
     try {
-      const response = await POST("users/signup", { body });
-      localStorage.setItem("userToken", JSON.stringify(response.token));
-      localStorage.setItem("user", JSON.stringify(response.user));
-      return response;
+      const { data } = await userService.signup(body);
+      localStorage.setItem("userToken", JSON.stringify(data.token));
+      localStorage.setItem("user", JSON.stringify(data.user));
+      return data;
     } catch (error) {
-      return rejectWithValue(error.response?.data?.message || error.message);
+      return rejectWithValue(error.response?.data?.message || "Signup failed");
     }
   }
 );
 
 export const logout = createAsyncThunk("auth/logout", () => {
   localStorage.removeItem("userToken");
+  localStorage.removeItem("user");
 });
 
 const authSlice = createSlice({

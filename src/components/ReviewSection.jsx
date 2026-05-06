@@ -4,7 +4,6 @@ import { fetchReviews, toggleReviewLike } from "../redux/features/reviews/fetchR
 import { addReview } from "../redux/features/reviews/addReviewSlice";
 import { toggleLike } from "../redux/features/reviews/likeReviewSlice";
 import { AiFillStar, AiOutlineStar, AiFillHeart, AiOutlineHeart } from "react-icons/ai";
-import { setHeaders } from "../utils/constants";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { ReviewSkeleton } from "./Skeleton";
@@ -33,7 +32,7 @@ const ReviewSection = ({ movieId }) => {
   const navigate = useNavigate();
   const { reviews, isFetching } = useSelector((state) => state.fetchReviews);
   const { isAdding } = useSelector((state) => state.addReview);
-  const { user, userToken, isAuthenticated } = useSelector((state) => state.auth);
+  const { user, isAuthenticated } = useSelector((state) => state.auth);
 
   const [rating, setRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
@@ -49,9 +48,8 @@ const ReviewSection = ({ movieId }) => {
     if (rating === 0) { toast.error("Please select a star rating."); return; }
     if (reviewText.trim().length < 5) { toast.error("Please write at least a few words."); return; }
 
-    const headers = setHeaders(userToken);
     const body = { movieId, rating, reviewText };
-    const result = await dispatch(addReview({ body, headers }));
+    const result = await dispatch(addReview({ body }));
 
     if (addReview.fulfilled.match(result)) {
       setRating(0);
@@ -69,8 +67,7 @@ const ReviewSection = ({ movieId }) => {
     // Optimistic update
     dispatch(toggleReviewLike({ reviewId, userId: user._id }));
     
-    const headers = setHeaders(userToken);
-    const result = await dispatch(toggleLike({ reviewId, headers }));
+    const result = await dispatch(toggleLike({ reviewId }));
     
     if (toggleLike.rejected.match(result)) {
       // Revert on error

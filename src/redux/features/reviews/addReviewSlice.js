@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { POST } from "../../../utils/api";
+import { userService } from "../../../services/userService";
 
 const initialState = {
   isAdding: false,
@@ -8,12 +8,12 @@ const initialState = {
 
 export const addReview = createAsyncThunk(
   "reviews/add",
-  async ({ body, headers }, { rejectWithValue }) => {
+  async ({ body }, { rejectWithValue }) => {
     try {
-      const response = await POST("reviews", { body, headers });
-      return response;
+      const { data } = await userService.addReview(body);
+      return data;
     } catch (error) {
-      return rejectWithValue(error.message);
+      return rejectWithValue(error.response?.data?.message || "Failed to add review");
     }
   }
 );

@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { POST } from "../../../utils/api";
+import { userService } from "../../../services/userService";
 
 const initialState = {
   isLiking: false,
@@ -8,12 +8,12 @@ const initialState = {
 
 export const toggleLike = createAsyncThunk(
   "reviews/toggleLike",
-  async ({ reviewId, headers }, { rejectWithValue }) => {
+  async ({ reviewId }, { rejectWithValue }) => {
     try {
-      const response = await POST(`reviews/like/${reviewId}`, { headers });
-      return response;
+      const { data } = await userService.toggleReviewLike(reviewId);
+      return data;
     } catch (error) {
-      return rejectWithValue(error.message);
+      return rejectWithValue(error.response?.data?.message || "Failed to like review");
     }
   }
 );

@@ -1,0 +1,26 @@
+import axios from "axios";
+import { key, TMDB_API, VIEWBOX_API } from "../utils/constants";
+
+// Client for TMDB (Public API)
+export const tmdbClient = axios.create({
+  baseURL: TMDB_API.replace(/\/movie$/, ""),
+  params: {
+    api_key: key,
+    language: "en-US",
+  },
+});
+
+// Client for ViewBox (Private Backend)
+export const viewboxClient = axios.create({
+  baseURL: VIEWBOX_API,
+});
+
+// Auto-inject Authorization header for ViewBox requests
+viewboxClient.interceptors.request.use((config) => {
+  const token = localStorage.getItem("userToken");
+  if (token) {
+    const cleanToken = JSON.parse(token);
+    config.headers.Authorization = `Bearer ${cleanToken}`;
+  }
+  return config;
+});
