@@ -30,8 +30,13 @@ const Navbar = () => {
   // Restore user from localStorage
   useEffect(() => {
     if (userToken) {
-      const currentUser = JSON.parse(localStorage.getItem("user"));
-      dispatch(validate(currentUser));
+      try {
+        const storedUser = localStorage.getItem("user");
+        const currentUser = storedUser ? JSON.parse(storedUser) : null;
+        if (currentUser) dispatch(validate(currentUser));
+      } catch (e) {
+        console.error("Failed to parse user from storage", e);
+      }
     }
   }, [userToken, dispatch]);
 

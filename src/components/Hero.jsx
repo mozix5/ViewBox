@@ -7,10 +7,11 @@ import { BsPlayCircleFill, BsBookmark, BsBookmarkFill } from "react-icons/bs";
 import { HiOutlineInformationCircle } from "react-icons/hi";
 import { HeroSkeleton } from "./Skeleton";
 import { useDispatch, useSelector } from "react-redux";
-import { checkMovie } from "../redux/features/movies/checkMovieSlice";
-import { addMovie } from "../redux/features/movies/addMovieSlice";
-import { removeMovie } from "../redux/features/movies/removeMovieSlice";
-import { setHeaders } from "../utils/constants";
+import { 
+  checkWatchlist, 
+  addToWatchlist, 
+  removeFromWatchlist 
+} from "../redux/features/movies/watchlistSlice";
 import { toast } from "react-toastify";
 
 const Hero = () => {
@@ -18,10 +19,9 @@ const Hero = () => {
   const [index, setIndex] = useState(0);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { user, userToken } = useSelector((state) => state.auth);
-  const { isMovieInWatchList } = useSelector((state) => state.checkMovie);
-
+  const { user } = useSelector((state) => state.auth);
   const movie = data[index];
+  const isMovieInWatchList = useSelector((state) => state.watchlist.inWatchlist[movie?.id]);
 
   useEffect(() => {
     axios.get(requests.requestNowPlaying).then((res) => {
@@ -32,8 +32,7 @@ const Hero = () => {
 
   useEffect(() => {
     if (user?._id && movie?.id) {
-      const headers = setHeaders(userToken);
-      dispatch(checkMovie({ endpoint: `${user._id}/${movie.id}`, headers }));
+      dispatch(checkWatchlist({ userId: user._id, movieId: movie.id }));
     }
   }, [user?._id, movie?.id, dispatch]);
 
@@ -43,16 +42,21 @@ const Hero = () => {
 
   const handleWatchlist = async () => {
     if (!user?._id) { toast.error("Login to save to Watchlist"); return; }
-    const headers = setHeaders(userToken);
+    
     if (isMovieInWatchList) {
-      await dispatch(removeMovie({ endpoint: `${user._id}/${movie.id}`, headers }));
+      await dispatch(removeFromWatchlist({ userId: user._id, movieId: movie.id }));
     } else {
-      await dispatch(addMovie({
-        body: { movieId: movie.id, userId: user._id, title: movie.title, rating: movie.vote_average, genre: [], posterUrl: movie.poster_path },
-        headers,
+      await dispatch(addToWatchlist({
+        body: { 
+          movieId: movie.id, 
+          userId: user._id, 
+          title: movie.title, 
+          rating: movie.vote_average, 
+          genre: [], 
+          posterUrl: movie.poster_path 
+        }
       }));
     }
-    dispatch(checkMovie({ endpoint: `${user._id}/${movie.id}`, headers }));
   };
 
   return (

@@ -19,8 +19,13 @@ export const viewboxClient = axios.create({
 viewboxClient.interceptors.request.use((config) => {
   const token = localStorage.getItem("userToken");
   if (token) {
-    const cleanToken = JSON.parse(token);
-    config.headers.Authorization = `Bearer ${cleanToken}`;
+    try {
+      const cleanToken = JSON.parse(token);
+      config.headers.Authorization = `Bearer ${cleanToken}`;
+    } catch (e) {
+      // If token isn't valid JSON, fallback to raw string or ignore
+      config.headers.Authorization = `Bearer ${token}`;
+    }
   }
   return config;
 });

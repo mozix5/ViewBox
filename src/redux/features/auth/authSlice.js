@@ -1,12 +1,24 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { userService } from "../../../services/userService";
 
-const userToken = localStorage.getItem("userToken")
-  ? JSON.parse(localStorage.getItem("userToken"))
-  : null;
+let userToken = null;
+try {
+  const storedToken = localStorage.getItem("userToken");
+  userToken = storedToken ? JSON.parse(storedToken) : null;
+} catch (e) {
+  userToken = localStorage.getItem("userToken");
+}
+
+let user = {};
+try {
+  const storedUser = localStorage.getItem("user");
+  user = storedUser ? JSON.parse(storedUser) : {};
+} catch (e) {
+  user = {};
+}
 
 const InitialState = {
-  user: JSON.parse(localStorage.getItem("user")) || {},
+  user,
   userToken,
   loading: false,
   isAuthenticated: !!userToken,

@@ -2,15 +2,14 @@ import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { logout } from "../redux/features/auth/authSlice";
-import { fetchWatchList } from "../redux/features/movies/fetchWatchListSlice";
-import { setHeaders } from "../utils/constants";
+import { fetchWatchList } from "../redux/features/movies/watchlistSlice";
 import { ProfileSkeleton } from "../components/Skeleton";
 import { AiFillStar, AiOutlineStar } from "react-icons/ai";
 import { MdOutlineBookmarkBorder, MdLogout, MdEmail } from "react-icons/md";
 
 const Profile = () => {
-  const { user, userToken, isAuthenticated } = useSelector((state) => state.auth);
-  const { watchList } = useSelector((state) => state.fetchWatchList);
+  const { user, isAuthenticated } = useSelector((state) => state.auth);
+  const { watchList } = useSelector((state) => state.watchlist);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -20,10 +19,9 @@ const Profile = () => {
 
   useEffect(() => {
     if (user?._id) {
-      const headers = setHeaders(userToken);
-      dispatch(fetchWatchList({ endpoint: `${user._id}`, headers, key: 1 }));
+      dispatch(fetchWatchList({ userId: user._id, page: 1 }));
     }
-  }, [user, dispatch, userToken]);
+  }, [user, dispatch]);
 
   const handleSignOut = () => {
     dispatch(logout());

@@ -1,0 +1,103 @@
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { userService } from "../../../services/userService";
+
+const initialState = {
+  watchList: {},
+  isFetching: {},
+  error: {},
+  inWatchlist: {}, // cache for individual movie checks
+};
+
+export const fetchWatchList = createAsyncThunk(
+  "watchlist/fetch",
+  async ({ userId, page = 1 }, { rejectWithValue }) => {
+    try {
+      const { data } = await userService.getWatchlist(userId, page);
+      return { key: page, data };
+    } catch (error) {
+      return rejectWithValue({ key: page, error: error.response?.data?.message || error.message });
+    }
+  }
+);
+
+export const addToWatchlist = createAsyncThunk(
+  "watchlist/add",
+  async ({ body }, { rejectWithValue }) => {
+    try {
+      const { data } = await userService.addToWatchlist(body);
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || error.message);
+    }
+  }
+);
+
+export const removeFromWatchlist = createAsyncThunk(
+  "watchlist/remove",
+  async ({ userId, movieId }, { rejectWithValue }) => {
+    try {
+      const { data } = await userService.removeFromWatchlist(userId, movieId);
+      return { movieId, data };
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || error.message);
+    }
+  }
+);
+
+export const checkWatchlist = createAsyncThunk(
+  "watchlist/check",
+  async ({ userId, movieId }, { rejectWithValue }) => {
+    try {
+      const { data } = await userService.checkWatchlist(userId, movieId);
+      return { movieId, exists: data.exists };
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || error.message);
+    }
+  }
+);
+
+const watchlistSlice = createSlice({
+  name: "watchlist",
+  initialState,
+  reducers: {
+    // Optimistic update for removing
+    removeOptimistic: (state, action) => {
+      const { movieId, key } = action.payload;
+      if (state.watchList[key]) {
+        state.watchList[key] = state.watchList[key].filter(item => item.movie.movieId !== movieId);
+      }
+      state.inWatchlist[movieId] = false;
+    }
+  },
+  extraReducers: (builder) => {
+    builder
+      // Fetch
+      .addCase(fetchWatchList.pending, (state, action) => {
+        const { page } = action.meta.arg;
+        state.isFetching[page] = true;
+      })
+      .addCase(fetchWatchList.fulfilled, (state, action) => {
+        const { key, data } = action.payload;
+        state.isFetching[key] = false;
+        state.watchList[key] = data;
+      })
+      .addCase(fetchWatchList.rejected, (state, action) => {
+        const { key, error } = action.payload;
+        state.isFetching[key] = false;
+        state.error[key] = error;
+      })
+      // Check
+      .addCase(checkWatchlist.fulfilled, (state, action) => {
+        const { movieId, exists } = action.payload;
+        state.inWatchlist[movieId] = exists;
+      })
+      // Add
+      .addCase(addToWatchlist.fulfilled, (state, action) => {
+        const { movieId } = action.meta.arg.body;
+        state.inWatchlist[movieId] = true;
+      });
+  },
+});
+
+export const { removeOptimistic } = watchlistSlice.actions;
+export default watchlistSlice.reducer;

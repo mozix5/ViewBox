@@ -9,7 +9,7 @@ export const userService = {
   getWatchlist: (userId, page = 1) => viewboxClient.get(`/movies/${userId}?page=${page}`),
   addToWatchlist: (body) => viewboxClient.post("/movies", body),
   removeFromWatchlist: (userId, movieId) => viewboxClient.delete(`/movies/${userId}/${movieId}`),
-  checkWatchlist: (userId, movieId) => viewboxClient.get(`/movies/check/${userId}/${movieId}`),
+  checkWatchlist: (userId, movieId) => viewboxClient.get(`/movies/${userId}/${movieId}`),
 
   // Reviews
   getReviews: (movieId) => viewboxClient.get(`/reviews/${movieId}`),

@@ -15,11 +15,11 @@ import ReviewSection from "../components/ReviewSection";
 
 
 import { fetchMovieById } from "../redux/features/movies/fetchMovieByIdSlice";
-import { checkMovie } from "../redux/features/movies/checkMovieSlice";
-import { addMovie } from "../redux/features/movies/addMovieSlice";
-import { removeMovie } from "../redux/features/movies/removeMovieSlice";
-
-import { setHeaders } from "../utils/constants";
+import { 
+  checkWatchlist, 
+  addToWatchlist, 
+  removeFromWatchlist 
+} from "../redux/features/movies/watchlistSlice";
 
 const MovieDetails = () => {
   const dispatch = useDispatch();
@@ -28,48 +28,42 @@ const MovieDetails = () => {
   const { fetchedMovie, loading, error } = useSelector((state) => state.fetchMovieById);
   const [imageLoaded, setImageLoaded] = useState(false);
 
-  const { user, userToken } = useSelector((state) => state.auth);
-  const { isMovieInWatchList, isChecking } = useSelector(
-    (state) => state.checkMovie
-  );
-  const { isAdding } = useSelector((state) => state.addMovie);
-  const headers = setHeaders(userToken);
+  const { user, isAuthenticated } = useSelector((state) => state.auth);
+  const inWatchlist = useSelector((state) => state.watchlist.inWatchlist[id]);
+  const isChecking = useSelector((state) => state.watchlist.isFetching[id]);
 
   useEffect(() => {
     if (id) {
-      dispatch(fetchMovieById({ id: id }));
+      dispatch(fetchMovieById({ id }));
     }
   }, [id, dispatch]);
 
   useEffect(() => {
     if (user?._id && id) {
-      const endpoint = `${user._id}/${id}`;
-      dispatch(checkMovie({ endpoint, headers }));
+      dispatch(checkWatchlist({ userId: user._id, movieId: id }));
     }
   }, [user?._id, id, dispatch]);
 
   const addToDb = async () => {
-    if (user?._id) {
-      const body = {
-        movieId: id,
-        userId: user._id,
-        title: fetchedMovie.title,
-        rating: fetchedMovie.vote_average,
-        genre: fetchedMovie.genres,
-        posterUrl: fetchedMovie.poster_path,
-      };
-      await dispatch(addMovie({ body: body, headers: headers }));
-      dispatch(checkMovie({ endpoint: `${user._id}/${id}`, headers }));
-    } else {
+    if (!isAuthenticated) {
       toast.error("You need to login first");
+      return;
     }
+    
+    const body = {
+      movieId: id,
+      userId: user._id,
+      title: fetchedMovie.title,
+      rating: fetchedMovie.vote_average,
+      genre: fetchedMovie.genres?.[0]?.name || "movie",
+      posterUrl: fetchedMovie.poster_path,
+    };
+    await dispatch(addToWatchlist({ body }));
   };
 
   const deleteFromDb = async () => {
     if (user?._id) {
-      const endpoint = `${user._id}/${id}`;
-      await dispatch(removeMovie({ endpoint, headers }));
-      dispatch(checkMovie({ endpoint, headers }));
+      await dispatch(removeFromWatchlist({ userId: user._id, movieId: id }));
     }
   };
 
@@ -174,9 +168,9 @@ const MovieDetails = () => {
               >
                 Trailer
               </button>
-              {isAdding || isChecking ? (
+              {isChecking ? (
                 <LoadingSpinner />
-              ) : isMovieInWatchList ? (
+              ) : inWatchlist ? (
                 <FaHeart
                   className="text-red-500 text-2xl cursor-pointer"
                   onClick={deleteFromDb}

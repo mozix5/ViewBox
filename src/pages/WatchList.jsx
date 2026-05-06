@@ -5,38 +5,38 @@ import { AiFillStar } from "react-icons/ai";
 import { FiBookmark, FiTrash2 } from "react-icons/fi";
 import { MdMovieFilter } from "react-icons/md";
 
-import { setHeaders } from "../utils/constants";
-import { fetchWatchList } from "../redux/features/movies/fetchWatchListSlice";
-import { removeMovie } from "../redux/features/movies/removeMovieSlice";
+import { fetchWatchList, removeOptimistic, removeFromWatchlist } from "../redux/features/movies/watchlistSlice";
 import { MovieCardSkeleton } from "../components/Skeleton";
 
 const WatchList = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { user, userToken } = useSelector((state) => state.auth);
-  const { watchList, isFetching } = useSelector((state) => state.fetchWatchList);
-  const headers = setHeaders(userToken);
+  const { user } = useSelector((state) => state.auth);
+  const { watchList, isFetching } = useSelector((state) => state.watchlist);
   const { search } = useLocation();
-  const key = search.split("=")[1] || 1;
+  const pageNum = parseInt(search.split("=")[1]) || 1;
 
   useEffect(() => {
-    if (user?._id && key) {
-      const endpoint = `${user?._id}${search}`;
-      dispatch(fetchWatchList({ endpoint, headers, key }));
+    if (user?._id) {
+      dispatch(fetchWatchList({ userId: user._id, page: pageNum }));
     }
-  }, [user, dispatch, search, key]);
+  }, [user, dispatch, pageNum]);
 
   const handleRemove = async (movieId) => {
     if (user?._id) {
-      const endpoint = `${user._id}/${movieId}`;
-      await dispatch(removeMovie({ endpoint, headers }));
-      const fetchEndpoint = `${user._id}${search}`;
-      dispatch(fetchWatchList({ endpoint: fetchEndpoint, headers, key }));
+      // Optimistic update for better UX
+      dispatch(removeOptimistic({ movieId, key: pageNum }));
+      
+      // Actual API call
+      await dispatch(removeFromWatchlist({ userId: user._id, movieId }));
+      
+      // Refresh to ensure sync if needed (optional)
+      dispatch(fetchWatchList({ userId: user._id, page: pageNum }));
     }
   };
 
-  const movies = watchList[key] || [];
-  const fetching = isFetching[key];
+  const movies = watchList[pageNum] || [];
+  const fetching = isFetching[pageNum];
 
   return (
     <div className="min-h-screen bg-black text-white relative">
