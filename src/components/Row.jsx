@@ -7,14 +7,7 @@ import { HiArrowSmRight } from "react-icons/hi";
 import MovieCard from "./MovieCard";
 import { MovieCardSkeleton } from "./Skeleton";
 import { fetchMovies } from "../redux/features/movies/fetchMoviesSlice";
-
-const SECTION_LABELS = {
-  upcoming: "Coming Soon",
-  popular: "Popular Right Now",
-  trending: "Trending Today",
-  top_rated: "Top Rated",
-  horror: "Horror",
-};
+import { SECTION_LABELS } from "../config/movieConfig";
 
 const Row = ({ fetchURL, title }) => {
   const navigate = useNavigate();

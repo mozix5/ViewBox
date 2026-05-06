@@ -11,6 +11,10 @@ export const movieService = {
   getDetails: (id) => fetchWithCache(`/movie/${id}`, { params: { append_to_response: "videos" } }),
   
   search: (query, page = 1) => fetchWithCache(`/search/movie`, { params: { query, page } }),
+
+  getByCategory: (category, page = 1) => fetchWithCache(`/movie/${category}`, { params: { page } }),
+
+  getByUrl: (url) => fetchWithCache(url),
   
   discover: (filters, page = 1) => {
     const { year, genre, language, sort } = filters;

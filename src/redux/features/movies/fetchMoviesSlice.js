@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { GET } from "../../../utils/api";
+import { movieService } from "../../../services/movieService";
 
 const InitialState = {
   fetchedMovies: {},
@@ -12,8 +12,15 @@ export const fetchMovies = createAsyncThunk(
   "movies/fetch",
   async ({ category, page = 1, fetchUrl, key, filters }, { rejectWithValue }) => {
     try {
-      const response = await GET({ fetchUrl, category, page, filters });
-      return { key, fetchedMovies:response };
+      let response;
+      if (filters && Object.values(filters).some(v => v)) {
+        response = await movieService.discover(filters, page);
+      } else if (fetchUrl) {
+        response = await movieService.getByUrl(fetchUrl);
+      } else {
+        response = await movieService.getByCategory(category, page);
+      }
+      return { key, fetchedMovies: response };
     } catch (error) {
       return rejectWithValue({ key, error: error.message });
     }
