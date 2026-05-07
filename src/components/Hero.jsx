@@ -66,7 +66,7 @@ const Hero = () => {
   };
 
   return (
-    <div className="relative h-[92vh] w-full overflow-hidden bg-black text-white">
+    <div className="relative h-[85vh] sm:h-[92vh] w-full overflow-hidden bg-black text-white">
 
       {/* Blurred low-res background */}
       <div
@@ -97,7 +97,7 @@ const Hero = () => {
       <div className="absolute inset-0 z-10 bg-gradient-to-r from-black/80 via-black/20 to-transparent" />
 
       {/* Content */}
-      <div className="absolute bottom-0 left-0 z-20 px-10 md:px-16 pb-16 max-w-2xl">
+      <div className="absolute bottom-0 left-0 z-20 px-5 sm:px-10 md:px-16 pb-10 sm:pb-16 max-w-2xl">
         {/* Badge */}
         <div className="flex items-center gap-2 mb-4">
           <span className="bg-purple-600 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-widest">
@@ -110,7 +110,7 @@ const Hero = () => {
         </div>
 
         {/* Title */}
-        <h1 className="text-5xl md:text-6xl font-black leading-tight mb-4 drop-shadow-2xl">
+        <h1 className="text-3xl sm:text-5xl md:text-6xl font-black leading-tight mb-3 sm:mb-4 drop-shadow-2xl">
           {movie.title || movie.original_title}
         </h1>
 
@@ -122,15 +122,15 @@ const Hero = () => {
         </div>
 
         {/* Overview */}
-        <p className="text-gray-300 text-sm leading-relaxed mb-8 line-clamp-3 max-w-lg">
+        <p className="text-gray-300 text-sm leading-relaxed mb-5 sm:mb-8 line-clamp-2 sm:line-clamp-3 max-w-lg">
           {movie.overview}
         </p>
 
         {/* Buttons */}
-        <div className="flex gap-3 flex-wrap">
+        <div className="flex gap-2 sm:gap-3 flex-wrap">
           <button
             onClick={() => navigate(`/upcoming/${movie.id}`)}
-            className="flex items-center gap-2 bg-white text-black font-bold px-7 py-3 rounded-full hover:bg-gray-100 transition-all hover:scale-105 active:scale-95 shadow-lg text-sm"
+            className="flex items-center gap-2 bg-white text-black font-bold px-5 sm:px-7 py-2.5 sm:py-3 rounded-full hover:bg-gray-100 transition-all hover:scale-105 active:scale-95 shadow-lg text-sm"
           >
             <BsPlayCircleFill className="text-lg" />
             Watch Now
@@ -139,7 +139,7 @@ const Hero = () => {
           <button
             onClick={handleWatchlist}
             disabled={isUpdating[movie?.id]}
-            className={`flex items-center gap-2 font-semibold px-7 py-3 rounded-full border transition-all hover:scale-105 active:scale-95 text-sm backdrop-blur-sm ${
+            className={`flex items-center gap-2 font-semibold px-5 sm:px-7 py-2.5 sm:py-3 rounded-full border transition-all hover:scale-105 active:scale-95 text-sm backdrop-blur-sm ${
               isMovieInWatchList
                 ? "bg-purple-600/20 border-purple-500/40 text-purple-400"
                 : "bg-white/10 border-white/20 text-white hover:bg-white/20"
@@ -162,7 +162,7 @@ const Hero = () => {
 
           <button
             onClick={() => navigate(`/upcoming/${movie.id}`)}
-            className="flex items-center gap-2 bg-white/10 border border-white/15 backdrop-blur-sm text-white font-semibold px-5 py-3 rounded-full hover:bg-white/20 transition-all hover:scale-105 active:scale-95 text-sm"
+            className="hidden sm:flex items-center gap-2 bg-white/10 border border-white/15 backdrop-blur-sm text-white font-semibold px-5 py-3 rounded-full hover:bg-white/20 transition-all hover:scale-105 active:scale-95 text-sm"
           >
             <HiOutlineInformationCircle className="text-lg" />
             More Info
@@ -171,7 +171,7 @@ const Hero = () => {
       </div>
 
       {/* Dot indicators */}
-      <div className="absolute bottom-6 right-10 z-20 flex gap-2">
+      <div className="absolute bottom-4 sm:bottom-6 right-5 sm:right-10 z-20 flex gap-2">
         {data.slice(0, 6).map((_, i) => (
           <button
             key={i}

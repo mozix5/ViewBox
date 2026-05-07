@@ -7,7 +7,7 @@ import { MovieCardSkeleton } from "../components/Skeleton";
 import Paginator from "../components/Paginator";
 import { fetchMovies } from "../redux/features/movies/fetchMoviesSlice";
 import { FiFilter, FiChevronDown, FiX } from "react-icons/fi";
-import { SECTION_LABELS, GENRES, LANGUAGES, YEARS } from "../config/movieConfig";
+import { SECTION_LABELS, GENRES, LANGUAGES, YEARS, GENRE_SLUG_MAP } from "../config/movieConfig";
 
 
 
@@ -31,15 +31,23 @@ const ShowsList = () => {
       year: selectedYear,
       language: selectedLang,
     };
-    
-    // If any filter is active, use 'discover' logic, otherwise use category
+
     const isFiltered = selectedGenre || selectedYear || selectedLang;
-    
-    dispatch(fetchMovies({ 
-      page: pageNum, 
-      category: isFiltered ? null : params.genre, 
-      filters: isFiltered ? filters : null,
-      key: pageNum 
+
+    // If the route param is a genre slug (e.g. "horror"), map it to a
+    // discover call with the matching genre ID instead of /movie/horror
+    const genreId = GENRE_SLUG_MAP[params.genre?.toLowerCase()];
+    const isGenreRoute = !!genreId && !isFiltered;
+
+    dispatch(fetchMovies({
+      page: pageNum,
+      category: isFiltered ? null : (genreId ? null : params.genre),
+      filters: isFiltered
+        ? filters
+        : isGenreRoute
+          ? { genre: genreId, year: "", language: "" }
+          : null,
+      key: pageNum,
     }));
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [dispatch, pageNum, params.genre, selectedGenre, selectedYear, selectedLang]);
@@ -57,7 +65,7 @@ const ShowsList = () => {
       {/* Ambient top glow */}
       <div className="fixed top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-purple-700 rounded-full blur-[160px] opacity-10 pointer-events-none z-0" />
 
-      <div className="relative z-10 max-w-screen-2xl mx-auto px-8 pt-28 pb-4">
+      <div className="relative z-10 max-w-screen-2xl mx-auto px-4 sm:px-8 pt-24 sm:pt-28 pb-4">
         
         <div className="flex flex-col lg:flex-row gap-8">
           
@@ -139,7 +147,7 @@ const ShowsList = () => {
                 <div className="w-1.5 h-10 rounded-full bg-gradient-to-b from-purple-400 to-violet-600 shrink-0" />
                 <div>
                   <p className="text-xs text-purple-400 uppercase tracking-widest font-semibold mb-1">Browse</p>
-                  <h1 className="text-4xl font-extrabold capitalize leading-none">{label}</h1>
+                  <h1 className="text-2xl sm:text-4xl font-extrabold capitalize leading-none">{label}</h1>
                 </div>
               </div>
               
@@ -157,7 +165,7 @@ const ShowsList = () => {
             </div>
 
             {/* Grid */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-5 place-items-center mb-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-5 place-items-center mb-4">
               {isFetching[pageNum] || !fetchedMovies[pageNum]
                 ? [...Array(15)].map((_, i) => <MovieCardSkeleton key={i} />)
                 : fetchedMovies[pageNum]?.map((item) => (

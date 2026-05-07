@@ -28,13 +28,13 @@ const Row = ({ fetchURL, title }) => {
   const label = SECTION_LABELS[title] || title;
 
   return (
-    <section className="px-8 md:px-14 pb-12">
+    <section className="px-4 sm:px-8 md:px-14 pb-8 sm:pb-12">
       {/* Section header */}
       <div className="flex items-center justify-between mb-5">
         <div className="flex items-center gap-3">
           {/* Accent bar */}
           <div className="w-1 h-6 rounded-full bg-gradient-to-b from-purple-400 to-violet-600" />
-          <h2 className="text-white text-xl font-bold capitalize tracking-tight">{label}</h2>
+          <h2 className="text-white text-lg sm:text-xl font-bold capitalize tracking-tight">{label}</h2>
         </div>
 
         <button
@@ -51,7 +51,7 @@ const Row = ({ fetchURL, title }) => {
         {/* Left arrow */}
         <button
           onClick={() => scroll("left")}
-          className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-30 w-10 h-10 rounded-full bg-black/70 backdrop-blur border border-white/10 text-white flex items-center justify-center opacity-0 group-hover/row:opacity-100 transition-all hover:bg-purple-600/80 shadow-xl"
+          className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-30 w-10 h-10 rounded-full bg-black/70 backdrop-blur border border-white/10 text-white hidden sm:flex items-center justify-center opacity-0 group-hover/row:opacity-100 transition-all hover:bg-purple-600/80 shadow-xl"
         >
           <FiChevronLeft className="text-lg" />
         </button>
@@ -59,7 +59,7 @@ const Row = ({ fetchURL, title }) => {
         {/* Right arrow */}
         <button
           onClick={() => scroll("right")}
-          className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-30 w-10 h-10 rounded-full bg-black/70 backdrop-blur border border-white/10 text-white flex items-center justify-center opacity-0 group-hover/row:opacity-100 transition-all hover:bg-purple-600/80 shadow-xl"
+          className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-30 w-10 h-10 rounded-full bg-black/70 backdrop-blur border border-white/10 text-white hidden sm:flex items-center justify-center opacity-0 group-hover/row:opacity-100 transition-all hover:bg-purple-600/80 shadow-xl"
         >
           <FiChevronRight className="text-lg" />
         </button>

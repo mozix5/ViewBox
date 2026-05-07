@@ -82,24 +82,24 @@ const ReviewSection = ({ movieId }) => {
       {/* Gradient separator */}
       <div className="w-full h-px bg-gradient-to-r from-transparent via-white/20 to-transparent mb-0" />
 
-      <div className="max-w-5xl mx-auto px-6 pt-14">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 pt-10 sm:pt-14">
 
         {/* ── Header & Aggregate Score ── */}
-        <div className="flex flex-col lg:flex-row gap-10 mb-12">
+        <div className="flex flex-col lg:flex-row gap-6 sm:gap-10 mb-10 sm:mb-12">
           {/* Left: Title */}
           <div className="flex-1">
             <p className="text-xs uppercase tracking-widest text-purple-400 font-semibold mb-2">Community</p>
-            <h2 className="text-4xl font-extrabold bg-gradient-to-r from-white to-purple-300 bg-clip-text text-transparent">
+            <h2 className="text-2xl sm:text-4xl font-extrabold bg-gradient-to-r from-white to-purple-300 bg-clip-text text-transparent">
               Ratings & Reviews
             </h2>
           </div>
 
           {/* Right: Score card */}
           {reviews?.length > 0 && (
-            <div className="flex items-start gap-8 bg-white/5 border border-white/10 rounded-3xl px-8 py-6 shadow-xl backdrop-blur-md">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-5 sm:gap-8 bg-white/5 border border-white/10 rounded-3xl px-5 sm:px-8 py-5 sm:py-6 shadow-xl backdrop-blur-md">
               {/* Big number */}
               <div className="flex flex-col items-center">
-                <span className="text-7xl font-black leading-none bg-gradient-to-b from-yellow-300 to-yellow-500 bg-clip-text text-transparent">
+                <span className="text-6xl sm:text-7xl font-black leading-none bg-gradient-to-b from-yellow-300 to-yellow-500 bg-clip-text text-transparent">
                   {averageRating}
                 </span>
                 <div className="flex gap-0.5 mt-2">
@@ -126,7 +126,7 @@ const ReviewSection = ({ movieId }) => {
         {isAuthenticated ? (
           <form
             onSubmit={handleSubmit}
-            className="relative bg-gradient-to-br from-white/8 to-white/3 border border-white/10 rounded-3xl p-7 mb-12 shadow-2xl overflow-hidden"
+            className="relative bg-gradient-to-br from-white/8 to-white/3 border border-white/10 rounded-3xl p-4 sm:p-7 mb-10 sm:mb-12 shadow-2xl overflow-hidden"
           >
             {/* Glow accent */}
             <div className="absolute -top-10 -left-10 w-40 h-40 bg-purple-600 rounded-full blur-[80px] opacity-20 pointer-events-none" />

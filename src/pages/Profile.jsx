@@ -44,7 +44,7 @@ const Profile = () => {
         <div className="absolute bottom-0 right-1/4 w-[400px] h-[400px] bg-violet-600 rounded-full blur-[140px] opacity-8" />
       </div>
 
-      <div className="relative z-10 max-w-4xl mx-auto px-6 pt-28 pb-20">
+      <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 pt-24 sm:pt-28 pb-20">
 
         {/* ── Profile Hero Card ── */}
         <div className="relative bg-gradient-to-br from-white/10 to-white/4 backdrop-blur-md border border-white/10 rounded-3xl p-8 mb-8 overflow-hidden shadow-2xl">
@@ -67,7 +67,7 @@ const Profile = () => {
             {/* Info */}
             <div className="flex-1 flex flex-col gap-3 text-center md:text-left">
               <div>
-                <h1 className="text-4xl font-black bg-gradient-to-r from-white via-purple-200 to-purple-400 bg-clip-text text-transparent leading-tight">
+                <h1 className="text-3xl sm:text-4xl font-black bg-gradient-to-r from-white via-purple-200 to-purple-400 bg-clip-text text-transparent leading-tight">
                   {user?.username}
                 </h1>
                 <p className="flex items-center justify-center md:justify-start gap-2 text-gray-500 text-sm mt-2">

@@ -105,7 +105,7 @@ const MovieDetails = () => {
         theme="dark"
       />
       
-      <div className="relative w-full h-screen flex items-center justify-center shrink-0">
+      <div className="relative w-full min-h-screen flex items-end sm:items-center justify-center shrink-0 pb-8 sm:pb-0">
         <div className=" z-10 absolute bg-black opacity-50 top-0 left-0 right-0 bottom-0"></div>
         <div
           className="absolute top-0 left-0 bottom-0 right-0 bg-black"
@@ -130,28 +130,28 @@ const MovieDetails = () => {
             backgroundPosition: "center",
           }}
         ></div>
-        <div className="flex gap-6 items-center w-[90%] lg:w-[58%] z-20">
-          <div>
+        <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 items-center sm:items-start w-[92%] lg:w-[60%] z-20 pt-24 sm:pt-0">
+          <div className="shrink-0">
             <img
-              className="h-[360px] w-64 shadow-2xl rounded-xl object-cover"
+              className="h-56 w-40 sm:h-[360px] sm:w-64 shadow-2xl rounded-xl object-cover"
               src={fetchedMovie?.poster_path ? `https://image.tmdb.org/t/p/w500${fetchedMovie.poster_path}` : ""}
               alt={fetchedMovie?.title || "Movie Poster"}
               loading="lazy"
             />
           </div>
-          <div className="flex-1 px-4">
-            <div className="text-4xl font-bold">{fetchedMovie?.title}</div>
-            <div className="flex items-center gap-4 py-3">
-              <div className="flex items-center gap-3 text-3xl">
+          <div className="flex-1 px-2 sm:px-4 text-center sm:text-left">
+            <div className="text-2xl sm:text-4xl font-bold">{fetchedMovie?.title}</div>
+            <div className="flex items-center gap-4 py-2 sm:py-3 justify-center sm:justify-start">
+              <div className="flex items-center gap-3 text-2xl sm:text-3xl">
                 <AiTwotoneStar className="text-yellow-400" />
                 {fetchedMovie?.vote_average?.toFixed(1)}
               </div>
               <div>
-                <div className="flex gap-6 text-sm">
+                <div className="flex gap-3 sm:gap-6 text-sm flex-wrap justify-center sm:justify-start">
                   <div>Released: {fetchedMovie?.release_date}</div>
                   <div>{fetchedMovie?.runtime} min</div>
                 </div>
-                <div className="flex gap-4">
+                <div className="flex gap-2 sm:gap-4 flex-wrap justify-center sm:justify-start">
                   {fetchedMovie?.genres?.map((item, index) => (
                     <div className="text-sm" key={index}>
                       {item.name}

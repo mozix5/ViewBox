@@ -7,39 +7,38 @@ const Skeleton = ({ className }) => (
 );
 
 export const MovieCardSkeleton = () => (
-  <div className="h-72 w-48 rounded-2xl overflow-hidden shrink-0">
+  <div className="h-56 w-36 sm:h-72 sm:w-48 rounded-2xl overflow-hidden shrink-0">
     <Skeleton className="h-full w-full rounded-2xl" />
   </div>
 );
 
 export const HeroSkeleton = () => (
-  <div className="h-[92vh] w-full relative bg-black overflow-hidden">
+  <div className="h-[85vh] sm:h-[92vh] w-full relative bg-black overflow-hidden">
     <Skeleton className="absolute inset-0 opacity-40" />
-    <div className="absolute bottom-0 left-0 px-16 pb-16 max-w-2xl space-y-4">
+    <div className="absolute bottom-0 left-0 px-5 sm:px-16 pb-10 sm:pb-16 max-w-2xl space-y-4">
       <Skeleton className="w-28 h-6 rounded-full" />
-      <Skeleton className="w-3/4 h-14" />
+      <Skeleton className="w-3/4 h-10 sm:h-14" />
       <Skeleton className="w-1/2 h-4" />
-      <Skeleton className="w-full h-16" />
+      <Skeleton className="w-full h-12 sm:h-16" />
       <div className="flex gap-3">
-        <Skeleton className="w-36 h-12 rounded-full" />
-        <Skeleton className="w-32 h-12 rounded-full" />
-        <Skeleton className="w-28 h-12 rounded-full" />
+        <Skeleton className="w-28 sm:w-36 h-10 sm:h-12 rounded-full" />
+        <Skeleton className="w-24 sm:w-32 h-10 sm:h-12 rounded-full" />
       </div>
     </div>
   </div>
 );
 
 export const MovieDetailsSkeleton = () => (
-  <div className="h-screen w-screen bg-black flex items-center justify-center px-16 relative">
-    <div className="flex gap-8 items-center w-[90%] lg:w-[58%] z-20">
-      <Skeleton className="h-[360px] w-64 shrink-0" />
+  <div className="h-screen w-screen bg-black flex items-center justify-center px-6 sm:px-16 relative">
+    <div className="flex flex-col sm:flex-row gap-6 sm:gap-8 items-center sm:items-center w-[92%] lg:w-[60%] z-20">
+      <Skeleton className="h-56 w-40 sm:h-[360px] sm:w-64 shrink-0" />
       <div className="flex-1 space-y-5">
-        <Skeleton className="w-3/4 h-12" />
+        <Skeleton className="w-3/4 h-8 sm:h-12" />
         <div className="flex gap-4">
           <Skeleton className="w-20 h-6" />
           <Skeleton className="w-20 h-6" />
         </div>
-        <Skeleton className="w-full h-28" />
+        <Skeleton className="w-full h-20 sm:h-28" />
         <div className="flex gap-4">
           <Skeleton className="w-32 h-10 rounded-3xl" />
           <Skeleton className="w-10 h-10 rounded-full" />

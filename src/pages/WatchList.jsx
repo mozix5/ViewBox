@@ -44,7 +44,7 @@ const WatchList = () => {
       <div className="fixed top-0 left-1/3 w-[500px] h-[400px] bg-purple-700 rounded-full blur-[180px] opacity-8 pointer-events-none" />
       <div className="fixed bottom-1/4 right-1/4 w-[300px] h-[300px] bg-violet-700 rounded-full blur-[150px] opacity-8 pointer-events-none" />
 
-      <div className="relative z-10 max-w-screen-xl mx-auto px-8 md:px-14 pt-28 pb-16">
+      <div className="relative z-10 max-w-screen-xl mx-auto px-4 sm:px-8 md:px-14 pt-24 sm:pt-28 pb-16">
 
         {/* ── Header ── */}
         <div className="flex items-center justify-between mb-10">
@@ -52,7 +52,7 @@ const WatchList = () => {
             <div className="w-1.5 h-10 rounded-full bg-gradient-to-b from-purple-400 to-violet-600 shrink-0" />
             <div>
               <p className="text-xs text-purple-400 uppercase tracking-widest font-semibold mb-1">My Collection</p>
-              <h1 className="text-4xl font-extrabold leading-none">Watchlist</h1>
+              <h1 className="text-3xl sm:text-4xl font-extrabold leading-none">Watchlist</h1>
             </div>
           </div>
 
@@ -68,7 +68,7 @@ const WatchList = () => {
         </div>
 
         {/* ── Grid / States ── */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-5">
+        <div className="grid grid-cols-2 xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-5">
           {fetching ? (
             /* Loading state */
             [...Array(12)].map((_, i) => (
@@ -98,7 +98,7 @@ const WatchList = () => {
             movies.map(({ movie }) => (
               <div
                 key={movie._id}
-                className="group relative h-72 w-full rounded-2xl overflow-hidden cursor-pointer shadow-lg hover:shadow-2xl hover:shadow-black/60 transition-all duration-300 hover:-translate-y-2 hover:scale-105"
+                className="group relative h-56 sm:h-72 w-full rounded-2xl overflow-hidden cursor-pointer shadow-lg hover:shadow-2xl hover:shadow-black/60 transition-all duration-300 hover:-translate-y-2 hover:scale-105"
                 onClick={() => navigate(`/${movie.genre || "popular"}/${movie.movieId}`)}
               >
                 {/* Poster */}
