@@ -10,13 +10,17 @@ const InitialState = {
 
 export const fetchMovies = createAsyncThunk(
   "movies/fetch",
-  async ({ category, page = 1, fetchUrl, key, filters }, { rejectWithValue }) => {
+  async ({ category, page = 1, searchQuery, key, filters }, { rejectWithValue }) => {
     try {
       let response;
       if (filters && Object.values(filters).some(v => v)) {
         response = await movieService.discover(filters, page);
-      } else if (fetchUrl) {
-        response = await movieService.getByUrl(fetchUrl);
+      } else if (searchQuery) {
+        response = await movieService.search(searchQuery, page);
+      } else if (category === "horror") {
+        response = await movieService.search("horror", page);
+      } else if (category === "trending") {
+        response = await movieService.getByCategory("popular", page + 1); // trending used to just be popular page 2
       } else {
         response = await movieService.getByCategory(category, page);
       }
