@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import React, { memo, useRef } from "react";
 import { AiFillStar } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
@@ -8,10 +8,20 @@ const MovieCard = ({ image, rating, id, genre, title }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  // Prefetch movie details on hover for instant feel when clicking
+  const hoverTimeoutRef = useRef(null);
+
+  // Prefetch movie details on hover for instant feel when clicking, with debounce
   const handleMouseEnter = () => {
     if (id) {
-      dispatch(fetchMovieById({ id }));
+      hoverTimeoutRef.current = setTimeout(() => {
+        dispatch(fetchMovieById({ id }));
+      }, 300); // Wait 300ms before fetching to prevent API spam when swiping mouse
+    }
+  };
+
+  const handleMouseLeave = () => {
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current);
     }
   };
 
@@ -19,6 +29,7 @@ const MovieCard = ({ image, rating, id, genre, title }) => {
     <div
       onClick={() => navigate(`/${genre}/${id}`)}
       onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
       className="group relative h-56 w-36 sm:h-72 sm:w-48 rounded-2xl overflow-hidden cursor-pointer shrink-0 shadow-lg hover:shadow-2xl hover:shadow-black/60 transition-all duration-300 hover:-translate-y-2 hover:scale-105"
     >
       {/* Poster - Optimized to w342 for performance */}
