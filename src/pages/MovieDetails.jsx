@@ -11,6 +11,7 @@ import { useDispatch, useSelector } from "react-redux";
 import Modal from "../components/Modal";
 import LoadingSpinner from "../components/LoadingSpinner";
 import { MovieDetailsSkeleton } from "../components/Skeleton";
+import CastAndCrew from "../components/CastAndCrew";
 import ReviewSection from "../components/ReviewSection";
 import WatchProviders from "../components/WatchProviders";
 
@@ -186,6 +187,7 @@ const MovieDetails = () => {
           </div>
         </div>
       </div>
+      <CastAndCrew credits={fetchedMovie?.credits} />
       <WatchProviders movieId={id} title={fetchedMovie?.title} />
       <ReviewSection movieId={id} />
     </div>

@@ -8,9 +8,11 @@ export const movieService = {
   getUpcoming: (page = 1) => fetchWithCache(`/movie/upcoming`, { params: { page } }),
   getNowPlaying: (page = 1) => fetchWithCache(`/movie/now_playing`, { params: { page } }),
   
-  getDetails: (id) => fetchWithCache(`/movie/${id}`, { params: { append_to_response: "videos" } }),
+  getDetails: (id) => fetchWithCache(`/movie/${id}`, { params: { append_to_response: "videos,credits" } }),
 
   getWatchProviders: (id) => fetchWithCache(`/movie/${id}/watch/providers`),
+
+  getPersonDetails: (id) => fetchWithCache(`/person/${id}`, { params: { append_to_response: "combined_credits" } }),
   
   search: (query, page = 1) => fetchWithCache(`/search/movie`, { params: { query, page } }),
 
