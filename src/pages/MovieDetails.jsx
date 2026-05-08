@@ -12,6 +12,7 @@ import Modal from "../components/Modal";
 import LoadingSpinner from "../components/LoadingSpinner";
 import { MovieDetailsSkeleton } from "../components/Skeleton";
 import ReviewSection from "../components/ReviewSection";
+import WatchProviders from "../components/WatchProviders";
 
 
 import { fetchMovieById } from "../redux/features/movies/fetchMovieByIdSlice";
@@ -185,6 +186,7 @@ const MovieDetails = () => {
           </div>
         </div>
       </div>
+      <WatchProviders movieId={id} title={fetchedMovie?.title} />
       <ReviewSection movieId={id} />
     </div>
   );

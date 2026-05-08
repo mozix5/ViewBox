@@ -9,6 +9,8 @@ export const movieService = {
   getNowPlaying: (page = 1) => fetchWithCache(`/movie/now_playing`, { params: { page } }),
   
   getDetails: (id) => fetchWithCache(`/movie/${id}`, { params: { append_to_response: "videos" } }),
+
+  getWatchProviders: (id) => fetchWithCache(`/movie/${id}/watch/providers`),
   
   search: (query, page = 1) => fetchWithCache(`/search/movie`, { params: { query, page } }),
 
