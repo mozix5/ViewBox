@@ -12,6 +12,7 @@ import Modal from "../components/Modal";
 import LoadingSpinner from "../components/LoadingSpinner";
 import { MovieDetailsSkeleton } from "../components/Skeleton";
 import CastAndCrew from "../components/CastAndCrew";
+import MovieAwards from "../components/MovieAwards";
 import ReviewSection from "../components/ReviewSection";
 import WatchProviders from "../components/WatchProviders";
 
@@ -187,6 +188,7 @@ const MovieDetails = () => {
           </div>
         </div>
       </div>
+      {fetchedMovie?.imdb_id && <MovieAwards imdbId={fetchedMovie.imdb_id} />}
       <CastAndCrew credits={fetchedMovie?.credits} />
       <WatchProviders movieId={id} title={fetchedMovie?.title} />
       <ReviewSection movieId={id} />

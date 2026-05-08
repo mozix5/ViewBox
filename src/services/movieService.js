@@ -13,6 +13,16 @@ export const movieService = {
   getWatchProviders: (id) => fetchWithCache(`/movie/${id}/watch/providers`),
 
   getPersonDetails: (id) => fetchWithCache(`/person/${id}`, { params: { append_to_response: "combined_credits" } }),
+
+  getOmdbDetails: async (imdbId) => {
+    if (!imdbId) return null;
+    const cacheKey = `omdb_${imdbId}`;
+    if (cache.has(cacheKey)) return cache.get(cacheKey);
+    const res = await fetch(`https://www.omdbapi.com/?apikey=thewdb&i=${imdbId}`);
+    const data = await res.json();
+    cache.set(cacheKey, data);
+    return data;
+  },
   
   search: (query, page = 1) => fetchWithCache(`/search/movie`, { params: { query, page } }),
 
