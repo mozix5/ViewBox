@@ -1,7 +1,6 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { requests } from "../assets/requests";
+import { movieService } from "../services/movieService";
 import { AiFillStar } from "react-icons/ai";
 import { BsPlayCircleFill, BsBookmark, BsBookmarkFill } from "react-icons/bs";
 import { HiOutlineInformationCircle } from "react-icons/hi";
@@ -27,10 +26,10 @@ const Hero = () => {
   const isUpdating = useSelector((state) => state.watchlist.isUpdating);
 
   useEffect(() => {
-    axios.get(requests.requestNowPlaying).then((res) => {
-      setData(res.data.results);
-      setIndex(Math.floor(Math.random() * res.data.results.length));
-    });
+    movieService.getByCategory("now_playing").then((res) => {
+      setData(res.results);
+      setIndex(Math.floor(Math.random() * res.results.length));
+    }).catch(console.error);
   }, []);
 
   useEffect(() => {

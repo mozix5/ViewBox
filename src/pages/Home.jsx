@@ -1,7 +1,6 @@
 import React from 'react'
 import Hero from '../components/Hero'
 import Row from '../components/Row'
-import { requests } from '../assets/requests'
 import Navbar from '../components/Navbar'
 
 const Home = () => {
@@ -10,11 +9,11 @@ const Home = () => {
     {/* <Navbar/> */}
         <Hero/>
 
-        <Row fetchURL={requests.requestUpcoming} title='upcoming'/>
-        <Row fetchURL={requests.requestPopular} title='popular'/>
-        <Row fetchURL={requests.requestTrending} title='trending'/>
-        <Row fetchURL={requests.requestTopRated} title='top_rated'/>
-        <Row fetchURL={requests.requestHorror} title='horror'/>
+        <Row title='upcoming'/>
+        <Row title='popular'/>
+        <Row title='trending'/>
+        <Row title='top_rated'/>
+        <Row title='horror'/>
     </div>
   )
 }

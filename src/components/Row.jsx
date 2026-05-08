@@ -9,15 +9,15 @@ import { MovieCardSkeleton } from "./Skeleton";
 import { fetchMovies } from "../redux/features/movies/fetchMoviesSlice";
 import { SECTION_LABELS } from "../config/movieConfig";
 
-const Row = ({ fetchURL, title }) => {
+const Row = ({ title }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { fetchedMovies, isFetching } = useSelector((state) => state.fetchMovies);
   const scrollRef = useRef(null);
 
   useEffect(() => {
-    dispatch(fetchMovies({ fetchUrl: fetchURL, key: title }));
-  }, []);
+    dispatch(fetchMovies({ category: title, key: title }));
+  }, [dispatch, title]);
 
   const scroll = (dir) => {
     if (scrollRef.current) {
