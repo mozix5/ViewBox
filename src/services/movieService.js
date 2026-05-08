@@ -3,11 +3,6 @@ import { tmdbClient } from "./apiClient";
 const cache = new Map();
 
 export const movieService = {
-  getPopular: (page = 1) => fetchWithCache(`/movie/popular`, { params: { page } }),
-  getTopRated: (page = 1) => fetchWithCache(`/movie/top_rated`, { params: { page } }),
-  getUpcoming: (page = 1) => fetchWithCache(`/movie/upcoming`, { params: { page } }),
-  getNowPlaying: (page = 1) => fetchWithCache(`/movie/now_playing`, { params: { page } }),
-  
   getDetails: (id) => fetchWithCache(`/movie/${id}`, { params: { append_to_response: "videos,credits" } }),
 
   getWatchProviders: (id) => fetchWithCache(`/movie/${id}/watch/providers`),
@@ -18,7 +13,8 @@ export const movieService = {
     if (!imdbId) return null;
     const cacheKey = `omdb_${imdbId}`;
     if (cache.has(cacheKey)) return cache.get(cacheKey);
-    const res = await fetch(`https://www.omdbapi.com/?apikey=thewdb&i=${imdbId}`);
+    // Request via backend proxy, no apikey needed in frontend
+    const res = await fetch(`http://localhost:5001/proxy/omdb?i=${imdbId}`);
     const data = await res.json();
     cache.set(cacheKey, data);
     return data;
@@ -27,8 +23,6 @@ export const movieService = {
   search: (query, page = 1) => fetchWithCache(`/search/movie`, { params: { query, page } }),
 
   getByCategory: (category, page = 1) => fetchWithCache(`/movie/${category}`, { params: { page } }),
-
-  getByUrl: (url) => fetchWithCache(url),
   
   discover: (filters, page = 1) => {
     const { year, genre, language, sort } = filters;

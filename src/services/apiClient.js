@@ -1,11 +1,10 @@
 import axios from "axios";
-import { key, TMDB_API, VIEWBOX_API } from "../utils/constants";
+import { TMDB_API, VIEWBOX_API } from "../utils/constants";
 
-// Client for TMDB (Public API)
+// Client for TMDB (via Proxy)
 export const tmdbClient = axios.create({
-  baseURL: TMDB_API.replace(/\/movie$/, ""),
+  baseURL: TMDB_API,
   params: {
-    api_key: key,
     language: "en-US",
   },
 });
