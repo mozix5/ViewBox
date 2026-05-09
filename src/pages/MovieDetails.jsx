@@ -3,8 +3,7 @@ import { useParams } from "react-router-dom";
 import { AiTwotoneStar } from "react-icons/ai";
 import { FaHeart, FaRegHeart } from "react-icons/fa";
 import Youtube from "react-youtube";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { toast } from "react-toastify";
 
 import { useDispatch, useSelector } from "react-redux";
 
@@ -95,18 +94,7 @@ const MovieDetails = () => {
           </div>
         </Modal>
       )}
-      <ToastContainer
-        position="top-center"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="dark"
-      />
+
       
       <div className="relative w-full min-h-screen flex items-end sm:items-center justify-center shrink-0 pb-8 sm:pb-0">
         <div className=" z-10 absolute bg-black opacity-50 top-0 left-0 right-0 bottom-0"></div>

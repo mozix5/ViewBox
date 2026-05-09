@@ -3,7 +3,6 @@ import { Route, Routes } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import { MovieDetailsSkeleton } from "./components/Skeleton";
 import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import ErrorBoundary from "./components/ErrorBoundary";
 
 const Home = lazy(() => import("./pages/Home"));
@@ -33,6 +32,32 @@ const App = () => {
           </Routes>
         </Suspense>
       </ErrorBoundary>
+
+      <ToastContainer
+        position="bottom-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        pauseOnHover
+        draggable
+        theme="dark"
+        toastStyle={{
+          background: "rgba(15, 10, 30, 0.85)",
+          backdropFilter: "blur(16px)",
+          WebkitBackdropFilter: "blur(16px)",
+          border: "1px solid rgba(139, 92, 246, 0.25)",
+          borderRadius: "16px",
+          color: "#e2e8f0",
+          boxShadow: "0 8px 32px rgba(0,0,0,0.5), 0 0 0 1px rgba(139,92,246,0.1)",
+          fontSize: "14px",
+          fontWeight: "500",
+        }}
+        progressStyle={{
+          background: "linear-gradient(90deg, #7c3aed, #a78bfa)",
+          borderRadius: "999px",
+        }}
+      />
     </div>
   );
 };
