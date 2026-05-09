@@ -1,10 +1,13 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { FiSearch, FiBookmark, FiUser, FiLogOut, FiX, FiMenu } from "react-icons/fi";
-import { AiFillStar } from "react-icons/ai";
+import { FiSearch, FiBookmark, FiX, FiMenu } from "react-icons/fi";
 import { searchMovies, clearSearch } from "../redux/features/movies/searchMovieSlice";
 import { logout, validate } from "../redux/features/user/authSlice";
+
+import SearchDropdown from "./navbar/SearchDropdown";
+import UserMenu from "./navbar/UserMenu";
+import MobileMenu from "./navbar/MobileMenu";
 
 const Navbar = () => {
   const { user, isAuthenticated, userToken } = useSelector((state) => state.auth);
@@ -22,17 +25,19 @@ const Navbar = () => {
   const searchRef = useRef(null);
   const userMenuRef = useRef(null);
 
+  // Scroll listener
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // Restore session from localStorage
   useEffect(() => {
     if (userToken) {
       try {
-        const storedUser = localStorage.getItem("user");
-        const currentUser = storedUser ? JSON.parse(storedUser) : null;
+        const stored = localStorage.getItem("user");
+        const currentUser = stored ? JSON.parse(stored) : null;
         if (currentUser) dispatch(validate(currentUser));
       } catch (e) {
         console.error("Failed to parse user from storage", e);
@@ -40,6 +45,7 @@ const Navbar = () => {
     }
   }, [userToken, dispatch]);
 
+  // Debounced search
   useEffect(() => {
     if (searchQuery.trim().length > 1) {
       const t = setTimeout(() => dispatch(searchMovies({ query: searchQuery })), 450);
@@ -49,19 +55,17 @@ const Navbar = () => {
     }
   }, [searchQuery, dispatch]);
 
+  // Close dropdowns on outside click
   useEffect(() => {
     const handler = (e) => {
-      if (searchRef.current && !searchRef.current.contains(e.target)) {
-        setShowSearch(false);
-      }
-      if (userMenuRef.current && !userMenuRef.current.contains(e.target)) {
-        setShowUserMenu(false);
-      }
+      if (searchRef.current && !searchRef.current.contains(e.target)) setShowSearch(false);
+      if (userMenuRef.current && !userMenuRef.current.contains(e.target)) setShowUserMenu(false);
     };
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
+  // Reset on route change
   useEffect(() => {
     setSearchQuery("");
     setShowSearch(false);
@@ -82,6 +86,8 @@ const Navbar = () => {
     setMobileMenuOpen(false);
     navigate("/login");
   };
+
+  const avatarSrc = `https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.username || "User"}&backgroundColor=c0aede`;
 
   return (
     <div className={`fixed top-0 left-0 right-0 z-[200] flex flex-col transition-all duration-500 ${scrolled ? "px-3 sm:px-6 pt-3 sm:pt-4" : "px-0 pt-0"}`}>
@@ -139,55 +145,15 @@ const Navbar = () => {
               )}
             </div>
 
-            {/* Desktop Search Dropdown */}
+            {/* Desktop search dropdown */}
             {showSearch && searchQuery.trim().length > 1 && (
-              <div className="absolute top-[calc(100%+10px)] left-0 right-0 bg-[#0e0e0e] border border-white/10 rounded-2xl shadow-2xl overflow-hidden z-50 max-h-[70vh] overflow-y-auto scrollbar-hide">
-                {isSearching ? (
-                  <div className="p-6 flex flex-col items-center gap-3 text-gray-500">
-                    <span className="w-6 h-6 border-2 border-gray-700 border-t-purple-400 rounded-full animate-spin" />
-                    <span className="text-sm">Searching…</span>
-                  </div>
-                ) : searchResults?.length > 0 ? (
-                  <>
-                    <div className="px-4 pt-3 pb-2 text-xs uppercase tracking-widest text-gray-600 font-semibold border-b border-white/5">
-                      Results for "{searchQuery}"
-                    </div>
-                    {searchResults.map((movie) => (
-                      <Link
-                        key={movie.id}
-                        to={`/movie/${movie.id}`}
-                        onClick={handleResultClick}
-                        className="flex items-center gap-4 px-4 py-3 hover:bg-white/6 transition-colors border-b border-white/4 last:border-none group"
-                      >
-                        <div className="relative shrink-0 overflow-hidden rounded-lg">
-                          <img
-                            src={movie.poster_path ? `https://image.tmdb.org/t/p/w92${movie.poster_path}` : "https://placehold.co/46x68/1a1a2e/666?text=?"}
-                            alt={movie.title}
-                            className="w-10 h-[60px] object-cover group-hover:scale-105 transition-transform"
-                          />
-                        </div>
-                        <div className="flex-1 overflow-hidden">
-                          <p className="text-white text-sm font-medium truncate group-hover:text-purple-300 transition-colors">{movie.title}</p>
-                          <div className="flex items-center gap-2 mt-0.5 text-xs text-gray-500">
-                            <span>{movie.release_date ? movie.release_date.split("-")[0] : "N/A"}</span>
-                            {movie.vote_average > 0 && (
-                              <>
-                                <span>·</span>
-                                <AiFillStar className="text-yellow-500 text-[10px]" />
-                                <span>{movie.vote_average?.toFixed(1)}</span>
-                              </>
-                            )}
-                          </div>
-                        </div>
-                        <span className="text-gray-700 text-xs group-hover:text-purple-400 transition-colors">→</span>
-                      </Link>
-                    ))}
-                  </>
-                ) : (
-                  <div className="p-8 text-center text-gray-600 text-sm">
-                    No results for "<span className="text-gray-400">{searchQuery}</span>"
-                  </div>
-                )}
+              <div className="absolute top-[calc(100%+10px)] left-0 right-0 z-50">
+                <SearchDropdown
+                  isSearching={isSearching}
+                  searchResults={searchResults}
+                  searchQuery={searchQuery}
+                  onResultClick={handleResultClick}
+                />
               </div>
             )}
           </div>
@@ -219,6 +185,7 @@ const Navbar = () => {
                   <FiBookmark className="text-base" />
                 </button>
 
+                {/* User menu */}
                 <div ref={userMenuRef} className="relative">
                   <button
                     onClick={() => setShowUserMenu((prev) => !prev)}
@@ -226,7 +193,7 @@ const Navbar = () => {
                   >
                     <div className="relative">
                       <img
-                        src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.username || "User"}&backgroundColor=c0aede`}
+                        src={avatarSrc}
                         alt="Avatar"
                         className="w-8 h-8 rounded-full border-2 border-white/15 group-hover:border-purple-400/60 transition-colors"
                       />
@@ -237,37 +204,7 @@ const Navbar = () => {
                     </span>
                   </button>
 
-                  {showUserMenu && (
-                    <div className="absolute right-0 top-[calc(100%+10px)] w-52 bg-[#111] border border-white/10 rounded-2xl shadow-2xl overflow-hidden z-50">
-                      <div className="px-4 py-3 border-b border-white/8 flex items-center gap-3">
-                        <img
-                          src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.username || "User"}&backgroundColor=c0aede`}
-                          alt="Avatar"
-                          className="w-9 h-9 rounded-full border border-white/15"
-                        />
-                        <div className="overflow-hidden">
-                          <p className="text-white text-sm font-semibold truncate">{user?.username}</p>
-                          <p className="text-gray-600 text-xs truncate">{user?.email}</p>
-                        </div>
-                      </div>
-                      <div className="py-1.5">
-                        <Link to="/profile" className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-300 hover:text-white hover:bg-white/6 transition-colors">
-                          <FiUser className="text-purple-400" /> My Profile
-                        </Link>
-                        <Link to="/watchList" className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-300 hover:text-white hover:bg-white/6 transition-colors">
-                          <FiBookmark className="text-purple-400" /> My Watchlist
-                        </Link>
-                      </div>
-                      <div className="border-t border-white/8 py-1.5">
-                        <button
-                          onClick={handleSignOut}
-                          className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-400 hover:text-red-300 hover:bg-red-500/8 transition-colors"
-                        >
-                          <FiLogOut /> Sign Out
-                        </button>
-                      </div>
-                    </div>
-                  )}
+                  {showUserMenu && <UserMenu user={user} onSignOut={handleSignOut} />}
                 </div>
               </>
             )}
@@ -276,13 +213,13 @@ const Navbar = () => {
           {/* Mobile right icons */}
           <div className="flex sm:hidden items-center gap-1 ml-auto">
             <button
-              onClick={() => { setMobileSearchOpen(s => !s); setMobileMenuOpen(false); }}
+              onClick={() => { setMobileSearchOpen((s) => !s); setMobileMenuOpen(false); }}
               className="w-9 h-9 flex items-center justify-center rounded-full text-gray-400 hover:text-white hover:bg-white/10 transition-all"
             >
               {mobileSearchOpen ? <FiX /> : <FiSearch />}
             </button>
             <button
-              onClick={() => { setMobileMenuOpen(s => !s); setMobileSearchOpen(false); }}
+              onClick={() => { setMobileMenuOpen((s) => !s); setMobileSearchOpen(false); }}
               className="w-9 h-9 flex items-center justify-center rounded-full text-gray-400 hover:text-white hover:bg-white/10 transition-all"
             >
               {mobileMenuOpen ? <FiX /> : <FiMenu />}
@@ -313,35 +250,17 @@ const Navbar = () => {
                 </button>
               )}
             </div>
+
+            {/* Mobile search dropdown */}
             {searchQuery.trim().length > 1 && (
-              <div className="mt-2 bg-[#0e0e0e] border border-white/10 rounded-2xl shadow-2xl overflow-hidden max-h-[60vh] overflow-y-auto scrollbar-hide">
-                {isSearching ? (
-                  <div className="p-6 flex flex-col items-center gap-3 text-gray-500">
-                    <span className="w-6 h-6 border-2 border-gray-700 border-t-purple-400 rounded-full animate-spin" />
-                    <span className="text-sm">Searching…</span>
-                  </div>
-                ) : searchResults?.length > 0 ? (
-                  searchResults.map((movie) => (
-                    <Link
-                      key={movie.id}
-                      to={`/movie/${movie.id}`}
-                      onClick={handleResultClick}
-                      className="flex items-center gap-3 px-4 py-3 hover:bg-white/6 transition-colors border-b border-white/4 last:border-none"
-                    >
-                      <img
-                        src={movie.poster_path ? `https://image.tmdb.org/t/p/w92${movie.poster_path}` : "https://placehold.co/46x68/1a1a2e/666?text=?"}
-                        alt={movie.title}
-                        className="w-9 h-[54px] object-cover rounded-lg shrink-0"
-                      />
-                      <div className="flex-1 overflow-hidden">
-                        <p className="text-white text-sm font-medium truncate">{movie.title}</p>
-                        <p className="text-gray-500 text-xs">{movie.release_date?.split("-")[0]}</p>
-                      </div>
-                    </Link>
-                  ))
-                ) : (
-                  <div className="p-6 text-center text-gray-600 text-sm">No results found</div>
-                )}
+              <div className="mt-2">
+                <SearchDropdown
+                  isSearching={isSearching}
+                  searchResults={searchResults}
+                  searchQuery={searchQuery}
+                  onResultClick={handleResultClick}
+                  headerLabel={<><span className="text-purple-400">{searchResults?.length ?? 0}</span> results</>}
+                />
               </div>
             )}
           </div>
@@ -349,52 +268,12 @@ const Navbar = () => {
 
         {/* Mobile Menu */}
         {mobileMenuOpen && (
-          <div className="sm:hidden px-4 pb-4 border-t border-white/10 mt-1">
-            {!isAuthenticated ? (
-              <div className="flex flex-col gap-2 pt-3">
-                <button
-                  onClick={() => navigate("/login")}
-                  className="w-full text-sm font-medium text-gray-300 hover:text-white py-2.5 border border-white/10 rounded-xl transition-colors"
-                >
-                  Log In
-                </button>
-                <button
-                  onClick={() => navigate("/signup")}
-                  className="w-full text-sm font-bold bg-gradient-to-r from-purple-600 to-violet-500 text-white py-2.5 rounded-xl"
-                >
-                  Sign Up
-                </button>
-              </div>
-            ) : (
-              <div className="pt-3">
-                <div className="flex items-center gap-3 mb-4 px-1">
-                  <img
-                    src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.username || "User"}&backgroundColor=c0aede`}
-                    alt="Avatar"
-                    className="w-10 h-10 rounded-full border-2 border-purple-500/40"
-                  />
-                  <div>
-                    <p className="text-white font-semibold text-sm">{user?.username}</p>
-                    <p className="text-gray-500 text-xs">{user?.email}</p>
-                  </div>
-                </div>
-                <div className="flex flex-col gap-1">
-                  <Link to="/profile" className="flex items-center gap-3 px-3 py-2.5 text-sm text-gray-300 hover:text-white hover:bg-white/6 rounded-xl transition-colors">
-                    <FiUser className="text-purple-400" /> My Profile
-                  </Link>
-                  <Link to="/watchList" className="flex items-center gap-3 px-3 py-2.5 text-sm text-gray-300 hover:text-white hover:bg-white/6 rounded-xl transition-colors">
-                    <FiBookmark className="text-purple-400" /> My Watchlist
-                  </Link>
-                  <button
-                    onClick={handleSignOut}
-                    className="flex items-center gap-3 px-3 py-2.5 text-sm text-red-400 hover:bg-red-500/8 rounded-xl transition-colors"
-                  >
-                    <FiLogOut /> Sign Out
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
+          <MobileMenu
+            isAuthenticated={isAuthenticated}
+            user={user}
+            onSignOut={handleSignOut}
+            onNavigate={navigate}
+          />
         )}
       </nav>
     </div>
